@@ -1,4 +1,17 @@
-# cs457-suspicion
+# 'Suspicion!' AI Agent
+
+## Authors
+- Keegan Saunders
+- Juan Becerra
+- Emanuel Hernández
+- Sean Mullarkey
+
+## Overview
+Big brain mode engaged. Blockchain machine learning big data.
+// TODO
+
+## Everything Else
+// TODO
 
 ## References
 - Rules: http://www.boardgamecapital.com/game_rules/suspicion.pdf
