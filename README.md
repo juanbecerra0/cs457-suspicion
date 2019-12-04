@@ -7,11 +7,27 @@
 - Sean Mullarkey
 
 ## Overview
-Big brain mode engaged. Blockchain machine learning big data.
 // TODO
+
+## Compilation/Running
+To compile the program, navigate to src and run:
+
+$-> javac *.java
+
+Then, follow this usage pattern:
+
+$-> java Suspicion [-display text|gui][-tournament x][-delay x][-loadplayer player.class][-loadplayers list_name.txt]
+
+Or, simply use this command to run and get a simple output (This pins our agent against 7 dumb agents):
+
+$-> java Suspicion -loadplayers dumbplayers.txt
 
 ## Everything Else
 // TODO
+
+## Notes
+- Almost all of our work will be in RBot.java
+- Take the gem color that you have the least of! This will immediately increase performance against RBotDumb.class
 
 ## References
 - Rules: http://www.boardgamecapital.com/game_rules/suspicion.pdf

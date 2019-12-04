@@ -1,0 +1,8 @@
+RBot.class
+RBotDumb.class
+RBotDumb.class
+RBotDumb.class
+RBotDumb.class
+RBotDumb.class
+RBotDumb.class
+RBotDumb.class
