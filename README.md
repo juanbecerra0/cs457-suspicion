@@ -11,17 +11,23 @@
 
 ## Compilation/Running
 To compile the program, navigate to src and run:
-
+<br>
+<code>
 $-> javac *.java
-
+</code>
+<br>
 Then, follow this usage pattern:
-
+<br>
+<code>
 $-> java Suspicion [-display text|gui][-tournament x][-delay x][-loadplayer player.class][-loadplayers list_name.txt]
-
+</code>
+<br>
 Or, simply use this command to run and get a simple output (This pins our agent against 7 dumb agents):
-
+<br>
+<code>
 $-> java Suspicion -loadplayers dumbplayers.txt
-
+</code>
+<br>
 ## Everything Else
 // TODO
 
