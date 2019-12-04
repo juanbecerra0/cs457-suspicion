@@ -7,7 +7,9 @@
 - Sean Mullarkey
 
 ## Overview
-// TODO
+Suspicion is a board game where players must navigate rooms, collect gems, and attempt to guess the identity of other teams. In this 
+CS 457: Artificial Intelligence project, we are tasked with creating an AI agent that makes intelligent moves using its percepts. Our 
+goal is to get a higher score than agents that make random guesses/moves, and to beat other intelligent agents a portion of the time.
 
 ## Compilation/Running
 To compile the program, navigate to src and run:
@@ -28,7 +30,17 @@ Or, simply use this command to run and get a simple output (This pins our agent 
 $-> java Suspicion -loadplayers dumbplayers.txt
 </code>
 <br>
-## Everything Else
+
+## Approach
+// TODO
+
+## Challenges
+// TODO
+
+## Testing
+// TODO
+
+## Results
 // TODO
 
 ## Notes
