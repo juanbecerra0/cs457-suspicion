@@ -47,6 +47,62 @@ $-> java Suspicion -loadplayers dumbplayers.txt
 - Almost all of our work will be in RBot.java
 - Take the gem color that you have the least of! This will immediately increase performance against RBotDumb.class
 
+- Guests (The players on the board)
+    - "Buford Barnswallow"
+    - "Earl of Volesworthy"
+    - "Mildred Wellington"
+    - "Nadia Bwalya",
+    - "Viola Chung"
+    - "Dr. Ashraf Najem"
+    - "Remy La Rocque"
+    - "Lily Nesbit"
+    - "Trudie Mudge"
+    - "Stefano Laconi"
+- Card Actions (Draw random card, do an action)
+    - "get,yellow:ask,Remy La Rocque,"
+    - "get,:viewDeck"
+    - "get,red:ask,Nadia Bwalya,"
+    - "get,green:ask,Lily Nesbit,"
+    - "viewDeck:ask,Buford Barnswallow,"
+    - "get,red:ask,Earl of Volesworthy,"
+    - "get,:ask,Nadia Bwalya,"
+    - "get,green:ask,Stefano Laconi,"
+    - "get,yellow:viewDeck"
+    - "get,:ask,Dr. Ashraf Najem,"
+    - "get,green:viewDeck"
+    - "get,red:viewDeck"
+    - "get,:ask,Mildred Wellington,"
+    - "get,:move,"
+    - "get,:ask,Earl of Volesworthy,"
+    - "get,:ask,Remy La Rocque,"
+    - "viewDeck:ask,Viola Chung,"
+    - "get,:ask,Stefano Laconi,"
+    - "get,:ask,Viola Chung,"
+    - "get,:viewDeck"
+    - "get,:ask,Lily Nesbit,"
+    - "get,yellow:ask,Mildred Wellington,"
+    - "get,:ask,Buford Barnswallow,"
+    - "get,:move,"
+    - "move,:ask,Dr. Ashraf Najem,"
+    - "get,:viewDeck"
+    - "get,:ask,Trudie Mudge,"
+    - "move,:ask,Trudie Mudge,"
+- Dice Actions (Roll both, move the players in adjacent rooms)
+    - Dice 1
+        - "Buford Barnswallow"
+        - "Earl of Volesworthy"
+        - "Mildred Wellington"
+        - "Viola Chung"
+        - "Dr. Ashraf Najem"
+        - "?" (anyone you want)
+    - Dice 2
+        - "Nadia Bwalya"
+        - "Remy La Rocque"
+        - "Lily Nesbit"
+        - "Trudie Mudge"
+        - "Stefano Laconi"
+        - "?" (anyone you want)
+
 ## References
 - Rules: http://www.boardgamecapital.com/game_rules/suspicion.pdf
 - Game Review: http://www.geekyhobbies.com/suspicion-2016-wonder-forge-board-game-review-and-rules/
