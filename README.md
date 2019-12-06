@@ -44,9 +44,12 @@ $-> java Suspicion -loadplayers dumbplayers.txt
 // TODO
 
 ## Notes
+
+### 12/4
 - Almost all of our work will be in RBot.java
 - Take the gem color that you have the least of! This will immediately increase performance against RBotDumb.class
 
+### 12/5
 - Guests (The players on the board)
     - "Buford Barnswallow"
     - "Earl of Volesworthy"
@@ -102,6 +105,22 @@ $-> java Suspicion -loadplayers dumbplayers.txt
         - "Trudie Mudge"
         - "Stefano Laconi"
         - "?" (anyone you want)
+
+### 12/6
+- Deciding moving which player and where would be best
+    - Move players in decision tree
+        - Sum up who you can see vs who you can't see
+        - Choose whichever decision brings greater amount of players to cross out
+        - Check what you have originally picked, and pick decision that most reduces your guess domain
+            - Check the probability of 'yes' or 'no'
+            - For example, (2:3) vs (4:1) can be very subjective (is it worth to choose 4?)
+- Picking gems
+    - Have an idea of what other player gems are currently on
+        - Pick a gem color that does not reveal your identity
+        - Pick gem colors that other players are also on (this makes it hard for other agents to detect you)
+    - Take personal probability weighted score and ensure that yours' is better than other players
+        - I.E. (1/5)(7) where (1/5) is probability of guessing your identity and (7) is what the score is worth
+        - Ensure that your gain (say, three points for gem) is better than theoretical agent scores
 
 ## References
 - Rules: http://www.boardgamecapital.com/game_rules/suspicion.pdf
