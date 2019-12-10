@@ -54,10 +54,10 @@ public class Suspicion
     public static final int GREEN=1;
     public static final int YELLOW=2;
 
-    private Vector<BotManager> bots;
-    private Vector<BotManager> deadbots;
+    private Vector<BotManager> bots; //This is all the bot managers
+    private HashMap<String, BotManager> playerBotManagers; //for keeping track of bot managers keyed off of player names
 
-    private HashMap<String, Constructor> botConstructors;
+    private static HashMap<String, Constructor> botConstructors = new HashMap<String, Constructor>();
 
     private Vector<String> playerFileNames;
     private String playerNames[];
@@ -86,6 +86,9 @@ public class Suspicion
         Bot bot;
         int row;
         int col;
+        int wins=0;
+        int gemScore=0;
+        int guessScore=0;
 
         public BotManager(Bot bot)
         {
@@ -95,6 +98,7 @@ public class Suspicion
 
     private class Board
     {
+        // hashmap of players keyed off of the guest name (*not* the player name)
         HashMap<String, BotManager> players;
         Room rooms[][];
         Random r = new Random();
@@ -216,6 +220,7 @@ public class Suspicion
             public final boolean gems[] = new boolean[3];
             public final int row;
             public final int col;
+            //Keyed off of guest name (*not* the player name)
             private HashMap<String, BotManager> players;
 
             public void removePlayer(String name)
@@ -439,7 +444,11 @@ public class Suspicion
         }
 
         for(Bot bot:bots)
-            this.bots.add(new BotManager(bot));
+        {
+            BotManager botman;
+            this.bots.add(botman= new BotManager(bot));
+            playerBotManagers.put(bot.playerName, botman);
+        }
     }
 
     private void loadPlayerFromFile(Vector<Bot> bots, String fname, String pname, String guestName) throws Exception
@@ -479,11 +488,100 @@ public class Suspicion
         }
     }
 
+    public void tabulateResults()
+    {
+        int bestScore=0;
+        BotManager bestBot=null;
+        Iterator<BotManager> botit = bots.iterator();
+        while(botit.hasNext())
+        {
+            BotManager bot = botit.next();
+            int guessScore=0;
+            int gemScore=0;
+
+            String guesses[] = bot.bot.reportGuesses().trim().split(":");
+            for(String temp:guesses)
+            {
+                String p = temp.trim().split(",")[0];
+                String g = temp.trim().split(",")[1];
+                if(board.players.get(g).bot.playerName.equals(p)) guessScore+=7;
+            }
+
+            gemScore = bot.gems[0] + bot.gems[1] + bot.gems[2]; 
+            int min = bot.gems[0];
+            if(bot.gems[1] < min) min = bot.gems[1];
+            if(bot.gems[2] < min) min = bot.gems[2];
+            gemScore += 3 * min;
+
+            if(guessScore+gemScore>bestScore)
+            {
+                bestScore = guessScore+gemScore;
+                bestBot=bot;
+            }
+
+            bot.guessScore=guessScore;
+            bot.gemScore=gemScore;
+        }
+        bestBot.wins++;
+    }
+
+    
+
+    public void printCurrentScores(int sortBy)
+    {
+        Iterator<BotManager> botit;
+
+        switch(sortBy)
+        {
+            case 1: // Sort by wins
+               Collections.sort(bots, 
+                   new Comparator<BotManager>() 
+                   {
+                       public int compare(BotManager a, BotManager b)
+                       {
+                           return b.wins- a.wins;
+                       }
+                   }
+               );
+            break;
+            case 2: // Sort by totalScore
+               Collections.sort(bots, 
+                   new Comparator<BotManager>() 
+                   {
+                       public int compare(BotManager a, BotManager b)
+                       {
+                           return -((a.gemScore+a.guessScore)-(b.gemScore+b.guessScore));
+                       }
+                   }
+               );
+            break;
+        }
+
+        System.out.println("PlayerName,GuessScore,GemScore,TotalScore,wins");
+        botit=bots.iterator();
+        while(botit.hasNext())
+        {
+            BotManager bot = botit.next();
+
+            System.out.print("" + bot.bot.playerName + ",");
+
+            System.out.println(bot.guessScore + "," + bot.gemScore + "," + (bot.guessScore+bot.gemScore) + "," + bot.wins);
+        }
+        
+    }
+
     public void printResults()
     {
+        tabulateResults();
+        printCurrentScores(2);
+    }
+
+    public void printResults2()
+    {
+        int bestScore=0;
+        BotManager bestBot=null;
         Iterator<BotManager> botit = bots.iterator();
         // Print out the guesses for every bot
-        botit=bots.iterator();
         while(botit.hasNext())
         {
             BotManager bot = botit.next();
@@ -516,8 +614,18 @@ public class Suspicion
             if(bot.gems[2] < min) min = bot.gems[2];
             gemScore += 3 * min;
 
+            if(guessScore+gemScore>bestScore)
+            {
+                bestScore = guessScore+gemScore;
+                bestBot=bot;
+            }
+
+            bot.guessScore=guessScore;
+            bot.gemScore=gemScore;
+
             System.out.println(guessScore + "," + gemScore + "," + (guessScore+gemScore));
         }
+        bestBot.wins++;
         
     }
 
@@ -531,9 +639,7 @@ public class Suspicion
         getUserPrefs(args);
 
         bots = new Vector<BotManager>();
-        deadbots = new Vector<BotManager>();
-        botConstructors = new HashMap<String, Constructor>();
-
+        playerBotManagers = new HashMap<String, BotManager>();
     }
 
     private void initDice()
@@ -942,11 +1048,42 @@ public class Suspicion
         return playerIDs;
     }
 
+    public static void tabulateResults(Suspicion game, Suspicion tournResults)
+    {
+        BotManager bestBot=null;
+        int bestScore=0;
+        for(BotManager bot:game.bots)
+        {
+            BotManager tbot = tournResults.playerBotManagers.get(bot.bot.playerName);
+            if(bot.guessScore+bot.gemScore>bestScore) 
+            {
+                bestScore=bot.guessScore+bot.gemScore;
+                bestBot=tbot;
+            }
+            tbot.guessScore += bot.guessScore;
+            tbot.gemScore += bot.gemScore;
+            tbot.wins += bot.wins;
+        }
+    }
+
     public static void main(String[] args) throws Exception
     {
         Suspicion game = new Suspicion(args);
         if(game.tournament)
         {
+            game.initGameState();
+            for(int x=0;x<game.numTournaments;x++)
+            {
+                Suspicion tgame = new Suspicion(args);
+                tgame.play();
+                System.out.println("**********************************************************");
+                System.out.println("Current game results...");
+                tgame.printResults();
+                tabulateResults(tgame, game);
+                System.out.println("**********************************************************");
+                System.out.println("Current tournament results...");
+                game.printCurrentScores(1);
+            }
         }
         else
         {
@@ -955,3 +1092,5 @@ public class Suspicion
         }
     }
 }
+
+
