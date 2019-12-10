@@ -190,6 +190,45 @@ public class RBotForStudents extends Bot
         return moves.toArray(new String[moves.size()]);
     }
 
+    private double scoreDecision(String card) {
+        double score = 0;
+        for(String cardAction: card.split(":")) // just go ahead and do them in this order
+        {
+            if(cardAction.startsWith("move")) 
+            {
+                score += 0;
+            }
+            else if(cardAction.startsWith("viewDeck")) 
+            {
+                /*
+                actions += ":viewDeck";
+                */
+            }
+            else if(cardAction.startsWith("get")) 
+            {
+                /*
+                if(cardAction.equals("get,")) {
+
+                    // actions += ":get," + this.board.rooms[me.row][me.col].availableGems[r.nextInt(this.board.rooms[me.row][me.col].availableGems.length)];
+                }
+                else actions += ":" + cardAction;
+                */
+            }
+            else if(cardAction.startsWith("ask")) 
+            {
+                /*
+                actions += ":" + cardAction + otherPlayerNames[r.nextInt(otherPlayerNames.length)]; 
+                */
+            }
+        }
+        
+        return score;
+    }
+
+    private int pickBestCard(String card1, String card2) {
+        if (scoreDecision(card1) > scoreDecision(card2)) return 0;
+        else return 1;
+    }
 
     public String getPlayerActions(String d1, String d2, String card1, String card2, String board) throws Suspicion.BadActionException
     {
@@ -213,7 +252,7 @@ public class RBotForStudents extends Bot
         this.board.movePlayer(piece, Integer.parseInt(moves[movei].split(",")[0]), Integer.parseInt(moves[movei].split(",")[1])); // Perform the move on my board
 
         // which card
-        int i = r.nextInt(2);
+        int i = pickBestCard(card1, card2);//r.nextInt(2);
         actions += ":play,card"+(i+1);
 
         String card = i==0?card1:card2;
@@ -223,6 +262,14 @@ public class RBotForStudents extends Bot
         {
             if(cardAction.startsWith("move")) 
             {
+                /*
+                    For any random player: move to highest occupancy room next to it
+                    For us: move us to the highest occupancy room next to us
+                    For backdoor:
+                        first case: move us to the highest occupancy room in the whole board
+                        second case: if we're already in the highest occupancy room then move one person in our room
+                        to a random room with the lowest occupancy
+                */
                 String guest;
                 guest = guestNames[r.nextInt(guestNames.length)];
                 piece = pieces.get(guest);
@@ -236,7 +283,10 @@ public class RBotForStudents extends Bot
             else if(cardAction.startsWith("get")) 
             {
 //@@@ You SHOULD replace this with code that optimizes this decision
-                if(cardAction.equals("get,")) actions += ":get," + this.board.rooms[me.row][me.col].availableGems[r.nextInt(this.board.rooms[me.row][me.col].availableGems.length)];
+                if(cardAction.equals("get,")) {
+
+                    // actions += ":get," + this.board.rooms[me.row][me.col].availableGems[r.nextInt(this.board.rooms[me.row][me.col].availableGems.length)];
+                }
                 else actions += ":" + cardAction;
             }
             else if(cardAction.startsWith("ask")) 
