@@ -1,4 +1,4 @@
-RBot.class
+RBonk.class
 RBotDumb.class
 RBotS1.class
 RBotS3.class

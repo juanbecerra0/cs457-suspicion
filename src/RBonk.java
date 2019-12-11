@@ -5,7 +5,7 @@ import java.util.*;
  * 
  */
 
-public class RBotForStudents extends Bot {
+public class RBonk extends Bot {
     Random r = new Random();
     HashMap<String, Piece> pieces; // Keyed off of guest name
     Board board;
@@ -308,8 +308,8 @@ public class RBotForStudents extends Bot {
                 // @@@ You SHOULD replace this with code that optimizes this decision
                 if (cardAction.equals("get,")) {
 
-                    // actions += ":get," +
-                    // this.board.rooms[me.row][me.col].availableGems[r.nextInt(this.board.rooms[me.row][me.col].availableGems.length)];
+                    actions += ":get," +
+                    this.board.rooms[me.row][me.col].availableGems[r.nextInt(this.board.rooms[me.row][me.col].availableGems.length)];
                 } else
                     actions += ":" + cardAction;
             } else if (cardAction.startsWith("ask")) {
@@ -566,7 +566,7 @@ public class RBotForStudents extends Bot {
         return rval.substring(0, rval.length() - 1);
     }
 
-    public RBotForStudents(String playerName, String guestName, int numStartingGems, String gemLocations,
+    public RBonk(String playerName, String guestName, int numStartingGems, String gemLocations,
             String[] playerNames, String[] guestNames) {
         super(playerName, guestName, numStartingGems, gemLocations, playerNames, guestNames);
         display = new TextDisplay(gemLocations);

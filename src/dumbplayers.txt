@@ -1,4 +1,4 @@
-RBotForStudents.class
+RBonk.class
 RBotDumb.class
 RBotDumb.class
 RBotDumb.class

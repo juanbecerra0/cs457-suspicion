@@ -122,6 +122,12 @@ $-> java Suspicion -loadplayers dumbplayers.txt
         - I.E. (1/5)(7) where (1/5) is probability of guessing your identity and (7) is what the score is worth
         - Ensure that your gain (say, three points for gem) is better than theoretical agent scores
 
+### 12/11
+- New code that checks entropy
+- Compare all color assignments for players
+    - Count the number of color occurences for each world state
+    - For a given player, the largest number for colors is what the agent should most likely consider
+
 ## References
 - Rules: http://www.boardgamecapital.com/game_rules/suspicion.pdf
 - Game Review: http://www.geekyhobbies.com/suspicion-2016-wonder-forge-board-game-review-and-rules/
