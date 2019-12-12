@@ -220,6 +220,38 @@ public class RBonk extends Bot {
         return moves.toArray(new String[moves.size()]);
     }
 
+    /**
+     * @author Juan Becerra
+     * 
+     * Takes a piece object and string array of possible moves.
+     * Returns the best possible move index (from string array).
+     * Used in dice moves.
+     */
+    private int getBestMoveAdjacent(Piece piece, String[] moves) {
+        int returnIndex = 0;
+
+        // TODO
+
+        return returnIndex;
+    }
+
+    /**
+     * 
+     * Takes a piece object.
+     * Returns the best possible move coordinates as a integer array
+     * where returnPair[0] is x and returnPair[1] is y.
+     * Used in "move," cards.
+     */
+    private int[] getBestMoveAnywhere(Piece piece) {
+        int[] returnPair = new int[2];
+        returnPair[0] = 0;
+        returnPair[1] = 0;
+
+        // TODO
+
+        return returnPair;
+    }
+
     public String getPlayerActions(String d1, String d2, String card1, String card2, String board)
             throws Suspicion.BadActionException {
         this.board = new Board(board, pieces, gemLocations);
@@ -230,7 +262,7 @@ public class RBonk extends Bot {
             d1 = guestNames[r.nextInt(guestNames.length)];
         Piece piece = pieces.get(d1);
         String[] moves = getPossibleMoves(piece);
-        int movei = r.nextInt(moves.length);
+        int movei = getBestMoveAdjacent(piece, moves); // Using new method
         actions += "move," + d1 + "," + moves[movei];
         this.board.movePlayer(piece, Integer.parseInt(moves[movei].split(",")[0]),
                 Integer.parseInt(moves[movei].split(",")[1])); // Perform the move on my board
@@ -240,7 +272,7 @@ public class RBonk extends Bot {
             d2 = guestNames[r.nextInt(guestNames.length)];
         piece = pieces.get(d2);
         moves = getPossibleMoves(piece);
-        movei = r.nextInt(moves.length);
+        movei = getBestMoveAdjacent(piece, moves);  // Using new method
         actions += ":move," + d2 + "," + moves[movei];
         this.board.movePlayer(piece, Integer.parseInt(moves[movei].split(",")[0]),
                 Integer.parseInt(moves[movei].split(",")[1])); // Perform the move on my board
@@ -262,10 +294,12 @@ public class RBonk extends Bot {
                  * random room with the lowest occupancy
                  */
                 String guest;
-                guest = guestNames[r.nextInt(guestNames.length)];
+                guest = guestNames[r.nextInt(guestNames.length)];   // May change later
                 piece = pieces.get(guest);
-                // moves = getPossibleMoves(piece);
-                actions += ":move," + guest + "," + r.nextInt(3) + "," + r.nextInt(4);
+
+                int[] bestMove = getBestMoveAnywhere(piece);
+
+                actions += ":move," + guest + "," + bestMove[0] + "," + bestMove[1];
             } else if (cardAction.startsWith("viewDeck")) {
                 actions += ":viewDeck";
             } else if (cardAction.startsWith("get")) {
