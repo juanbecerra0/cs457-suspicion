@@ -220,42 +220,6 @@ public class RBonk extends Bot {
         return moves.toArray(new String[moves.size()]);
     }
 
-    private double scoreDecision(String card) {
-        double score = 0;
-        for (String cardAction : card.split(":")) // just go ahead and do them in this order
-        {
-            if (cardAction.startsWith("move")) {
-                score += 0;
-            } else if (cardAction.startsWith("viewDeck")) {
-                /*
-                 * actions += ":viewDeck";
-                 */
-            } else if (cardAction.startsWith("get")) {
-                /*
-                 * if(cardAction.equals("get,")) {
-                 * 
-                 * // actions += ":get," +
-                 * this.board.rooms[me.row][me.col].availableGems[r.nextInt(this.board.rooms[me.
-                 * row][me.col].availableGems.length)]; } else actions += ":" + cardAction;
-                 */
-            } else if (cardAction.startsWith("ask")) {
-                /*
-                 * actions += ":" + cardAction +
-                 * otherPlayerNames[r.nextInt(otherPlayerNames.length)];
-                 */
-            }
-        }
-
-        return score;
-    }
-
-    private int pickBestCard(String card1, String card2) {
-        if (scoreDecision(card1) > scoreDecision(card2))
-            return 0;
-        else
-            return 1;
-    }
-
     public String getPlayerActions(String d1, String d2, String card1, String card2, String board)
             throws Suspicion.BadActionException {
         this.board = new Board(board, pieces, gemLocations);
