@@ -246,7 +246,7 @@ public class RBonk extends Bot {
                 Integer.parseInt(moves[movei].split(",")[1])); // Perform the move on my board
 
         // which card
-        int i = pickBestCard(card1, card2);// r.nextInt(2);
+        int i = r.nextInt(2);
         actions += ":play,card" + (i + 1);
 
         String card = i == 0 ? card1 : card2;
