@@ -477,18 +477,6 @@ public class RBonk extends Bot {
             System.out.println("Something has gone horribly wrong");
             return null;
         }
-
-        // TODO combine weight of how many gems we have vs how many people are on each type of gem
-
-        /*
-        if(bestColorIndex == 0) {
-            return "red";
-        } else if(bestColorIndex == 1) {
-            return "green";
-        } else {
-            return "yellow";
-        }
-        */
     }
 
     private boolean madeGemArray = false;
