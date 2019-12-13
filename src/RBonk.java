@@ -220,6 +220,145 @@ public class RBonk extends Bot {
         return moves.toArray(new String[moves.size()]);
     }
 
+    /**
+     * @author Juan Becerra
+     * 
+     * Gets the number of pieces that a piece would be able to see from a 
+     * specified x and y coordinate, given a formatted board string.
+     * Used in getBestMoveAdjacent and Anywhere.
+     */
+    private int getVisiblePiecesCount(int x, int y, String board) {
+        // Split the string by : seperated tokens
+        String[] tokens = board.split("[:]", -1);    // 12 tokens
+        
+        // Create a 2D array of ints representing the occurences of tokens in the string
+        int[][] pieceCountBoard = new int[3][4];
+        int k = 0;
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 4; j++) {
+                String thisToken = tokens[k++];
+                if(thisToken.length() == 0) {
+                    pieceCountBoard[i][j] = 0;
+                } else if (!thisToken.contains(",")) {
+                    pieceCountBoard[i][j] = 1;
+                } else {
+                    pieceCountBoard[i][j] = thisToken.split("[,]").length;
+                }
+            }
+        }
+
+        // Finally, count the pieces adjacent/at the piece at location x,y
+        int count = 0;
+        count+= pieceCountBoard[x][y] - 1;  // Currently standing here
+        
+        int tempx = x;
+        int tempy = y;
+
+        while(--tempx >= 0) {   // left
+            count+= pieceCountBoard[tempx][tempy];
+        }
+        tempx = x;
+        while(++tempx <= 2) {   // right
+            count+= pieceCountBoard[tempx][tempy];
+        }
+        tempx = x;
+        while(--tempy >= 0) {   // up
+            count+= pieceCountBoard[tempx][tempy];
+        }
+        tempy = y;
+        while(++tempy <= 3) {   // down
+            count+= pieceCountBoard[tempx][tempy];
+        }
+        tempy = y;
+
+        return count;
+    }
+
+    /**
+     * @author Juan Becerra
+     * 
+     * Takes a piece object and string array of possible moves.
+     * Returns the best possible move index (from string array).
+     * Used in dice moves.
+     */
+    private int getBestMoveAdjacent(Piece piece, String board, String[] moves, boolean lookForLeast) {
+        int returnIndex = -1;
+
+        if(lookForLeast) {
+            // Get the number of visible pieces from all adjacent positions
+            int thisIndex = 0;
+            int bestCount = 10000;
+            for(String coordString : moves) {
+                String[] coordSplit = coordString.split("[,]");
+                int thisCount = getVisiblePiecesCount(Integer.valueOf(coordSplit[0]), Integer.valueOf(coordSplit[1]), board);
+                if(thisCount < bestCount) {
+                    bestCount = thisCount;
+                    returnIndex = thisIndex;
+                }
+                thisIndex++;
+            }
+        } else {
+            // Get the number of visible pieces from all adjacent positions
+            int thisIndex = 0;
+            int bestCount = -1;
+            for(String coordString : moves) {
+                String[] coordSplit = coordString.split("[,]");
+                int thisCount = getVisiblePiecesCount(Integer.valueOf(coordSplit[0]), Integer.valueOf(coordSplit[1]), board);
+                if(thisCount > bestCount) {
+                    bestCount = thisCount;
+                    returnIndex = thisIndex;
+                }
+                thisIndex++;
+            }
+        }
+
+        return returnIndex;
+    }
+
+    /**
+     * @author Juan Becerra
+     * 
+     * Takes a piece object.
+     * Returns the best possible move coordinates as a integer array
+     * where returnPair[0] is x and returnPair[1] is y.
+     * Used in "move," cards.
+     */
+    private int[] getBestMoveAnywhere(Piece piece, String board, boolean lookForLeast) {
+        int[] returnPair = new int[2];
+        returnPair[0] = -1;
+        returnPair[1] = -1;
+
+        if(lookForLeast) {
+            // Iterate through every possible index
+            int bestCount = 10000;
+            for(int i = 0; i < 3; i++) {
+                for(int j = 0; j < 4; j++) {
+                    int thisCount = getVisiblePiecesCount(i, j, board);
+                    if(thisCount < bestCount) {
+                        bestCount = thisCount;
+                        returnPair[0] = i;
+                        returnPair[1] = j;
+                    }
+                }
+            }
+        } else {
+            // Iterate through every possible index
+            int bestCount = -1;
+            for(int i = 0; i < 3; i++) {
+                for(int j = 0; j < 4; j++) {
+                    int thisCount = getVisiblePiecesCount(i, j, board);
+                    if(thisCount > bestCount) {
+                        bestCount = thisCount;
+                        returnPair[0] = i;
+                        returnPair[1] = j;
+                    }
+                }
+            }
+        }
+
+        return returnPair;
+    }
+
     public String getPlayerActions(String d1, String d2, String card1, String card2, String board)
             throws Suspicion.BadActionException {
         this.board = new Board(board, pieces, gemLocations);
@@ -230,7 +369,12 @@ public class RBonk extends Bot {
             d1 = guestNames[r.nextInt(guestNames.length)];
         Piece piece = pieces.get(d1);
         String[] moves = getPossibleMoves(piece);
-        int movei = r.nextInt(moves.length);
+        int movei;
+        if(piece.name == me.name) {
+            movei = getBestMoveAdjacent(piece, board, moves, false);
+        } else {
+            movei = getBestMoveAdjacent(piece, board, moves, true); // Using new method
+        }
         actions += "move," + d1 + "," + moves[movei];
         this.board.movePlayer(piece, Integer.parseInt(moves[movei].split(",")[0]),
                 Integer.parseInt(moves[movei].split(",")[1])); // Perform the move on my board
@@ -240,7 +384,11 @@ public class RBonk extends Bot {
             d2 = guestNames[r.nextInt(guestNames.length)];
         piece = pieces.get(d2);
         moves = getPossibleMoves(piece);
-        movei = r.nextInt(moves.length);
+        if(piece.name == me.name) {
+            movei = getBestMoveAdjacent(piece, board, moves, false);
+        } else {
+            movei = getBestMoveAdjacent(piece, board, moves, true); // Using new method
+        }
         actions += ":move," + d2 + "," + moves[movei];
         this.board.movePlayer(piece, Integer.parseInt(moves[movei].split(",")[0]),
                 Integer.parseInt(moves[movei].split(",")[1])); // Perform the move on my board
@@ -262,10 +410,16 @@ public class RBonk extends Bot {
                  * random room with the lowest occupancy
                  */
                 String guest;
-                guest = guestNames[r.nextInt(guestNames.length)];
+                guest = guestNames[r.nextInt(guestNames.length)];   // May change later
                 piece = pieces.get(guest);
-                // moves = getPossibleMoves(piece);
-                actions += ":move," + guest + "," + r.nextInt(3) + "," + r.nextInt(4);
+                int[] bestMove;
+                if(piece.name == me.name) {
+                    bestMove = getBestMoveAnywhere(piece, board, false);
+                } else {
+                    bestMove = getBestMoveAnywhere(piece, board, true);
+                }
+
+                actions += ":move," + guest + "," + bestMove[0] + "," + bestMove[1];
             } else if (cardAction.startsWith("viewDeck")) {
                 actions += ":viewDeck";
             } else if (cardAction.startsWith("get")) {
