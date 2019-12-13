@@ -412,15 +412,15 @@ public class RBonk extends Bot {
     private String getBestColor(String board) {
         int[] colors = getColorDistribution(board);
 
-        int bestColorIndex = -1;
-        int bestColorCount = 0;
+        //int bestColorIndex = -1;
+        //int bestColorCount = 0;
         int total = 0;
 
         for(int i = 0; i < colors.length; i++) {
-            if(colors[i] > bestColorCount) {
-                bestColorCount = colors[i];
-                bestColorIndex = i;
-            }
+            //if(colors[i] > bestColorCount) {
+                //bestColorCount = colors[i];
+                //bestColorIndex = i;
+            //}
             total += colors[i];
         }
 
@@ -428,6 +428,12 @@ public class RBonk extends Bot {
         boolean canPickRed = false;
         boolean canPickGreen = false;
         boolean canPickYellow = false;
+
+        int totalHeld = redGems + greenGems + yellowGems;
+
+        double redScore = (Double.valueOf(totalHeld) / Double.valueOf(redGems)) * (Double.valueOf(colors[0]) / Double.valueOf(total));
+        double greenScore = (Double.valueOf(totalHeld) / Double.valueOf(greenGems)) * (Double.valueOf(colors[1]) / Double.valueOf(total));
+        double yellowScore = (Double.valueOf(totalHeld) / Double.valueOf(yellowGems)) * (Double.valueOf(colors[2]) / Double.valueOf(total));
 
         if(gemArray[me.row][me.col][0] == 1) {
             canPickRed = true;
@@ -440,24 +446,24 @@ public class RBonk extends Bot {
         }
 
         if (canPickRed && canPickGreen && canPickYellow) {
-            if (redGems >= greenGems && redGems >= yellowGems)
+            if (redScore >= greenScore && redScore >= yellowScore)
                 return "red";
-            else if (greenGems >= redGems && greenGems >= yellowGems)
+            else if (greenScore >= redScore && greenScore >= yellowScore)
                 return "green";
             else
                 return "yellow";
         } else if (canPickRed && canPickGreen && !canPickYellow) {
-            if (redGems >= greenGems)
+            if (redScore >= greenScore)
                 return "red";
             else
                 return "green";
         } else if (canPickRed && !canPickGreen && canPickYellow) {
-            if (redGems >= yellowGems)
+            if (redScore >= yellowScore)
                 return "red";
             else
                 return "yellow";
         } else if (!canPickRed && canPickGreen && canPickYellow) {
-            if (greenGems >= yellowGems)
+            if (greenScore >= yellowScore)
                 return "green";
             else
                 return "yellow";
