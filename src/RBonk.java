@@ -223,6 +223,60 @@ public class RBonk extends Bot {
     /**
      * @author Juan Becerra
      * 
+     * Gets the number of pieces that a piece would be able to see from a 
+     * specified x and y coordinate, given a formatted board string.
+     * Used in getBestMoveAdjacent and Anywhere.
+     */
+    private int getVisiblePiecesCount(int x, int y, String board) {
+        // Split the string by : seperated tokens
+        String[] tokens = board.split("[:]", -1);    // 12 tokens
+        
+        // Create a 2D array of ints representing the occurences of tokens in the string
+        int[][] pieceCountBoard = new int[3][4];
+        int k = 0;
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 4; j++) {
+                String thisToken = tokens[k++];
+                if(thisToken.length() == 0) {
+                    pieceCountBoard[i][j] = 0;
+                } else if (!thisToken.contains(",")) {
+                    pieceCountBoard[i][j] = 1;
+                } else {
+                    pieceCountBoard[i][j] = thisToken.split("[,]").length;
+                }
+            }
+        }
+
+        // Finally, count the pieces adjacent/at the piece at location x,y
+        int count = 0;
+        count+= pieceCountBoard[x][y] - 1;  // Currently standing here
+        
+        int tempx = x;
+        int tempy = y;
+
+        while(--tempx >= 0) {   // left
+            count+= pieceCountBoard[tempx][tempy];
+        }
+        tempx = x;
+        while(++tempx <= 2) {   // right
+            count+= pieceCountBoard[tempx][tempy];
+        }
+        tempx = x;
+        while(--tempy >= 0) {   // up
+            count+= pieceCountBoard[tempx][tempy];
+        }
+        tempy = y;
+        while(++tempy <= 3) {   // down
+            count+= pieceCountBoard[tempx][tempy];
+        }
+        tempy = y;
+
+        return count;
+    }
+
+    /**
+     * @author Juan Becerra
+     * 
      * Takes a piece object and string array of possible moves.
      * Returns the best possible move index (from string array).
      * Used in dice moves.
@@ -236,6 +290,7 @@ public class RBonk extends Bot {
     }
 
     /**
+     * @author Juan Becerra
      * 
      * Takes a piece object.
      * Returns the best possible move coordinates as a integer array
