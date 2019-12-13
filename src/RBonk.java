@@ -281,10 +281,21 @@ public class RBonk extends Bot {
      * Returns the best possible move index (from string array).
      * Used in dice moves.
      */
-    private int getBestMoveAdjacent(Piece piece, String[] moves) {
-        int returnIndex = 0;
+    private int getBestMoveAdjacent(Piece piece, String board, String[] moves) {
+        int returnIndex = -1;
 
-        // TODO
+        // Get the number of visible pieces from all adjacent positions
+        int thisIndex = 0;
+        int bestCount = -1;
+        for(String coordString : moves) {
+            String[] coordSplit = coordString.split("[,]");
+            int thisCount = getVisiblePiecesCount(Integer.valueOf(coordSplit[0]), Integer.valueOf(coordSplit[1]), board);
+            if(thisCount > bestCount) {
+                bestCount = thisCount;
+                returnIndex = thisIndex;
+            }
+            thisIndex++;
+        }
 
         return returnIndex;
     }
@@ -297,12 +308,23 @@ public class RBonk extends Bot {
      * where returnPair[0] is x and returnPair[1] is y.
      * Used in "move," cards.
      */
-    private int[] getBestMoveAnywhere(Piece piece) {
+    private int[] getBestMoveAnywhere(Piece piece, String board) {
         int[] returnPair = new int[2];
-        returnPair[0] = 0;
-        returnPair[1] = 0;
+        returnPair[0] = -1;
+        returnPair[1] = -1;
 
-        // TODO
+        // Iterate through every possible index
+        int bestVisible = -1;
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 4; j++) {
+                int thisVisible = getVisiblePiecesCount(i, j, board);
+                if(thisVisible > bestVisible) {
+                    bestVisible = thisVisible;
+                    returnPair[0] = i;
+                    returnPair[1] = j;
+                }
+            }
+        }
 
         return returnPair;
     }
@@ -317,7 +339,7 @@ public class RBonk extends Bot {
             d1 = guestNames[r.nextInt(guestNames.length)];
         Piece piece = pieces.get(d1);
         String[] moves = getPossibleMoves(piece);
-        int movei = getBestMoveAdjacent(piece, moves); // Using new method
+        int movei = getBestMoveAdjacent(piece, board, moves); // Using new method
         actions += "move," + d1 + "," + moves[movei];
         this.board.movePlayer(piece, Integer.parseInt(moves[movei].split(",")[0]),
                 Integer.parseInt(moves[movei].split(",")[1])); // Perform the move on my board
@@ -327,7 +349,7 @@ public class RBonk extends Bot {
             d2 = guestNames[r.nextInt(guestNames.length)];
         piece = pieces.get(d2);
         moves = getPossibleMoves(piece);
-        movei = getBestMoveAdjacent(piece, moves);  // Using new method
+        movei = getBestMoveAdjacent(piece, board, moves);  // Using new method
         actions += ":move," + d2 + "," + moves[movei];
         this.board.movePlayer(piece, Integer.parseInt(moves[movei].split(",")[0]),
                 Integer.parseInt(moves[movei].split(",")[1])); // Perform the move on my board
@@ -352,7 +374,7 @@ public class RBonk extends Bot {
                 guest = guestNames[r.nextInt(guestNames.length)];   // May change later
                 piece = pieces.get(guest);
 
-                int[] bestMove = getBestMoveAnywhere(piece);
+                int[] bestMove = getBestMoveAnywhere(piece, board);
 
                 actions += ":move," + guest + "," + bestMove[0] + "," + bestMove[1];
             } else if (cardAction.startsWith("viewDeck")) {
