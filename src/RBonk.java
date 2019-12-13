@@ -400,6 +400,10 @@ public class RBonk extends Bot {
         return counts;
     }
 
+    private int redGems = 0;
+    private int greenGems = 0;
+    private int yellowGems = 0; 
+
     /** 
      * When we need to pick a color, this returns a string of the 
      * best color to pick.
@@ -420,10 +424,57 @@ public class RBonk extends Bot {
             total += colors[i];
         }
 
-        System.out.println(bestColorIndex + ": " + (Double.valueOf(bestColorCount) / Double.valueOf(total)));
+        //System.out.println(bestColorIndex + ": " + (Double.valueOf(bestColorCount) / Double.valueOf(total)));
+        boolean canPickRed = false;
+        boolean canPickGreen = false;
+        boolean canPickYellow = false;
 
-        // TODO how many fucking gems do we have
+        if(gemArray[me.row][me.col][0] == 1) {
+            canPickRed = true;
+        }
+        if(gemArray[me.row][me.col][1] == 1) {
+            canPickGreen = true;
+        }
+        if(gemArray[me.row][me.col][2] == 1) {
+            canPickYellow = true;
+        }
 
+        if (canPickRed && canPickGreen && canPickYellow) {
+            if (redGems >= greenGems && redGems >= yellowGems)
+                return "red";
+            else if (greenGems >= redGems && greenGems >= yellowGems)
+                return "green";
+            else
+                return "yellow";
+        } else if (canPickRed && canPickGreen && !canPickYellow) {
+            if (redGems >= greenGems)
+                return "red";
+            else
+                return "green";
+        } else if (canPickRed && !canPickGreen && canPickYellow) {
+            if (redGems >= yellowGems)
+                return "red";
+            else
+                return "yellow";
+        } else if (!canPickRed && canPickGreen && canPickYellow) {
+            if (greenGems >= yellowGems)
+                return "green";
+            else
+                return "yellow";
+        } else if (canPickRed && !canPickGreen && !canPickYellow) {
+            return "red";
+        } else if (!canPickRed && canPickGreen && !canPickYellow) {
+            return "green";
+        } else if (!canPickRed && !canPickGreen && canPickYellow) {
+            return "yellow";
+        } else {
+            System.out.println("Something has gone horribly wrong");
+            return null;
+        }
+
+        // TODO combine weight of how many gems we have vs how many people are on each type of gem
+
+        /*
         if(bestColorIndex == 0) {
             return "red";
         } else if(bestColorIndex == 1) {
@@ -431,6 +482,7 @@ public class RBonk extends Bot {
         } else {
             return "yellow";
         }
+        */
     }
 
     private boolean madeGemArray = false;
@@ -497,13 +549,28 @@ public class RBonk extends Bot {
             } else if (cardAction.startsWith("viewDeck")) {
                 actions += ":viewDeck";
             } else if (cardAction.startsWith("get")) {
+                String color = "";
                 // @@@ You SHOULD replace this with code that optimizes this decision
                 if (cardAction.equals("get,")) {
-                    //getBestColor(board);
-                    actions += ":get," + //getBestColor(board);   // TODO need to account for our own gems
-                    this.board.rooms[me.row][me.col].availableGems[r.nextInt(this.board.rooms[me.row][me.col].availableGems.length)];
-                } else
+                    
+                    color = getBestColor(board);
+                    // this.board.rooms[me.row][me.col].availableGems[r.nextInt(this.board.rooms[me.row][me.col].availableGems.length)];
+
+                    actions += ":get," + color;
+                } else {
+                    String[] tokens = cardAction.split("[,]");
+                    color = tokens[1];
                     actions += ":" + cardAction;
+                }
+                // Increment the correct color
+                if(color.equals("red")) {
+                    redGems++;
+                } else if (color.equals("green")) {
+                    greenGems++;
+                } else if (color.equals("yellow")) {
+                    yellowGems++;
+                }
+
             } else if (cardAction.startsWith("ask")) {
                 actions += ":" + cardAction + otherPlayerNames[r.nextInt(otherPlayerNames.length)];
             }
