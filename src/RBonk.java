@@ -400,6 +400,39 @@ public class RBonk extends Bot {
         return counts;
     }
 
+    /** 
+     * When we need to pick a color, this returns a string of the 
+     * best color to pick.
+     * 
+    */
+    private String getBestColor(String board) {
+        int[] colors = getColorDistribution(board);
+
+        int bestColorIndex = -1;
+        int bestColorCount = 0;
+        int total = 0;
+
+        for(int i = 0; i < colors.length; i++) {
+            if(colors[i] > bestColorCount) {
+                bestColorCount = colors[i];
+                bestColorIndex = i;
+            }
+            total += colors[i];
+        }
+
+        System.out.println(bestColorIndex + ": " + (Double.valueOf(bestColorCount) / Double.valueOf(total)));
+
+        // TODO how many fucking gems do we have
+
+        if(bestColorIndex == 0) {
+            return "red";
+        } else if(bestColorIndex == 1) {
+            return "green";
+        } else {
+            return "yellow";
+        }
+    }
+
     private boolean madeGemArray = false;
 
     public String getPlayerActions(String d1, String d2, String card1, String card2, String board)
@@ -473,9 +506,9 @@ public class RBonk extends Bot {
             } else if (cardAction.startsWith("get")) {
                 // @@@ You SHOULD replace this with code that optimizes this decision
                 if (cardAction.equals("get,")) {
-
-                    actions += ":get," +
-                    this.board.rooms[me.row][me.col].availableGems[r.nextInt(this.board.rooms[me.row][me.col].availableGems.length)];
+                    //getBestColor(board);
+                    actions += ":get," + getBestColor(board);   // TODO need to account for our own gems
+                    //this.board.rooms[me.row][me.col].availableGems[r.nextInt(this.board.rooms[me.row][me.col].availableGems.length)];
                 } else
                     actions += ":" + cardAction;
             } else if (cardAction.startsWith("ask")) {
