@@ -411,23 +411,11 @@ public class RBonk extends Bot {
     */
     private String getBestColor(String board) {
         int[] colors = getColorDistribution(board);
-
-        //int bestColorIndex = -1;
-        //int bestColorCount = 0;
         int total = 0;
 
         for(int i = 0; i < colors.length; i++) {
-            //if(colors[i] > bestColorCount) {
-                //bestColorCount = colors[i];
-                //bestColorIndex = i;
-            //}
             total += colors[i];
         }
-
-        //System.out.println(bestColorIndex + ": " + (Double.valueOf(bestColorCount) / Double.valueOf(total)));
-        boolean canPickRed = false;
-        boolean canPickGreen = false;
-        boolean canPickYellow = false;
 
         int totalHeld = redGems + greenGems + yellowGems;
 
@@ -435,6 +423,9 @@ public class RBonk extends Bot {
         double greenScore = (Double.valueOf(totalHeld) / Double.valueOf(greenGems)) * (Double.valueOf(colors[1]) / Double.valueOf(total));
         double yellowScore = (Double.valueOf(totalHeld) / Double.valueOf(yellowGems)) * (Double.valueOf(colors[2]) / Double.valueOf(total));
 
+        boolean canPickRed = false;
+        boolean canPickGreen = false;
+        boolean canPickYellow = false;
         if(gemArray[me.row][me.col][0] == 1) {
             canPickRed = true;
         }
