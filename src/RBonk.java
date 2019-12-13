@@ -452,9 +452,9 @@ public class RBonk extends Bot {
         String[] moves = getPossibleMoves(piece);
         int movei;
         if(piece.name == me.name) {
-            movei = getBestMoveAdjacent(piece, board, moves, false);
+            movei = getBestMoveAdjacent(piece, board, moves, true);
         } else {
-            movei = getBestMoveAdjacent(piece, board, moves, true); // Using new method
+            movei = getBestMoveAdjacent(piece, board, moves, false); // Using new method
         }
         actions += "move," + d1 + "," + moves[movei];
         this.board.movePlayer(piece, Integer.parseInt(moves[movei].split(",")[0]),
@@ -466,9 +466,9 @@ public class RBonk extends Bot {
         piece = pieces.get(d2);
         moves = getPossibleMoves(piece);
         if(piece.name == me.name) {
-            movei = getBestMoveAdjacent(piece, board, moves, false);
+            movei = getBestMoveAdjacent(piece, board, moves, true);
         } else {
-            movei = getBestMoveAdjacent(piece, board, moves, true); // Using new method
+            movei = getBestMoveAdjacent(piece, board, moves, false); // Using new method
         }
         actions += ":move," + d2 + "," + moves[movei];
         this.board.movePlayer(piece, Integer.parseInt(moves[movei].split(",")[0]),
@@ -483,21 +483,14 @@ public class RBonk extends Bot {
         for (String cardAction : card.split(":")) // just go ahead and do them in this order
         {
             if (cardAction.startsWith("move")) {
-                /*
-                 * For any random player: move to highest occupancy room next to it For us: move
-                 * us to the highest occupancy room next to us For backdoor: first case: move us
-                 * to the highest occupancy room in the whole board second case: if we're
-                 * already in the highest occupancy room then move one person in our room to a
-                 * random room with the lowest occupancy
-                 */
                 String guest;
                 guest = guestNames[r.nextInt(guestNames.length)];   // May change later
                 piece = pieces.get(guest);
                 int[] bestMove;
                 if(piece.name == me.name) {
-                    bestMove = getBestMoveAnywhere(piece, board, false);
-                } else {
                     bestMove = getBestMoveAnywhere(piece, board, true);
+                } else {
+                    bestMove = getBestMoveAnywhere(piece, board, false);
                 }
 
                 actions += ":move," + guest + "," + bestMove[0] + "," + bestMove[1];
@@ -507,8 +500,8 @@ public class RBonk extends Bot {
                 // @@@ You SHOULD replace this with code that optimizes this decision
                 if (cardAction.equals("get,")) {
                     //getBestColor(board);
-                    actions += ":get," + getBestColor(board);   // TODO need to account for our own gems
-                    //this.board.rooms[me.row][me.col].availableGems[r.nextInt(this.board.rooms[me.row][me.col].availableGems.length)];
+                    actions += ":get," + //getBestColor(board);   // TODO need to account for our own gems
+                    this.board.rooms[me.row][me.col].availableGems[r.nextInt(this.board.rooms[me.row][me.col].availableGems.length)];
                 } else
                     actions += ":" + cardAction;
             } else if (cardAction.startsWith("ask")) {
