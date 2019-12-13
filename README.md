@@ -37,7 +37,42 @@ have attempted to implement:
 
 - Pick best dice move
 - Pick best card action (move)
-- Pick best 
+- Pick best card action (get)
+- Pick best card action (ask)
+- Pick most likely identities at end of the game
+
+### Dice and Card Movement
+These two sections were combined as the logic for choosing where to move is very similar.
+
+To find the best move for adjacent and anywhere moves, we call getBestMoveAdjacent and getBestMoveAnywhere respectively.
+In addition, we call a helper method getVisiblePieceCount, which returns how many players can see you (by row and col) 
+given an x and y coordinate. Both adjacent and anywhere methods work very similarly, but where anywhere checks every slot 
+on the board for the optimal spot to move (move card), adjacent only checks adjacent positions to the current location (dice).
+
+Our logic follows this: If we are moving a player other than ourselves, we want to move the piece to a more "isolated" position,
+or a position where the player is viewed by fewer people. If we are moving ourselves, we want to move to more populated areas.
+This way, when we ask players or we are asked, it is easier to deduct who other players are and harder for other players to 
+deduct where we are. While moving other players to more isolated positions won't help us too much (as there are several other players
+moving other players), we found that moving ourself to more populated areas slightly increased our win rates (around 3%-6% from given
+agent).
+
+### Picking Gems
+In the case where we get to select a gem where our piece is currently placed, we used a combination of two ideas:
+
+- Pick the gem that we have the least of (so we can get bonus points for having sets of 3 gems)
+- Pick the gem that has the most players currently on (so it is difficult to deduct our identity to other agents)
+
+Obviously, these two ideas don't always result in the same gem selection, so we used a scoring system for each gem. The pseudocode is as follows:
+
+{gemColor}Score = (OurTotalGems / {gemColor}Count) * ({gemColor}StandingOn / totalStandingOn)
+
+This combination approach resulted in significantly better results (around 10% - 15%).
+
+### Asking the Right Player
+// TODO
+
+### Picking the Right Player/Agent Identities
+// TODO
 
 ## Challenges
 // TODO
@@ -47,91 +82,6 @@ have attempted to implement:
 
 ## Results
 // TODO
-
-## Notes
-
-### 12/4
-- Almost all of our work will be in RBot.java
-- Take the gem color that you have the least of! This will immediately increase performance against RBotDumb.class
-
-### 12/5
-- Guests (The players on the board)
-    - "Buford Barnswallow"
-    - "Earl of Volesworthy"
-    - "Mildred Wellington"
-    - "Nadia Bwalya",
-    - "Viola Chung"
-    - "Dr. Ashraf Najem"
-    - "Remy La Rocque"
-    - "Lily Nesbit"
-    - "Trudie Mudge"
-    - "Stefano Laconi"
-- Card Actions (Draw random card, do an action)
-    - "get,yellow:ask,Remy La Rocque,"
-    - "get,:viewDeck"
-    - "get,red:ask,Nadia Bwalya,"
-    - "get,green:ask,Lily Nesbit,"
-    - "viewDeck:ask,Buford Barnswallow,"
-    - "get,red:ask,Earl of Volesworthy,"
-    - "get,:ask,Nadia Bwalya,"
-    - "get,green:ask,Stefano Laconi,"
-    - "get,yellow:viewDeck"
-    - "get,:ask,Dr. Ashraf Najem,"
-    - "get,green:viewDeck"
-    - "get,red:viewDeck"
-    - "get,:ask,Mildred Wellington,"
-    - "get,:move,"
-    - "get,:ask,Earl of Volesworthy,"
-    - "get,:ask,Remy La Rocque,"
-    - "viewDeck:ask,Viola Chung,"
-    - "get,:ask,Stefano Laconi,"
-    - "get,:ask,Viola Chung,"
-    - "get,:viewDeck"
-    - "get,:ask,Lily Nesbit,"
-    - "get,yellow:ask,Mildred Wellington,"
-    - "get,:ask,Buford Barnswallow,"
-    - "get,:move,"
-    - "move,:ask,Dr. Ashraf Najem,"
-    - "get,:viewDeck"
-    - "get,:ask,Trudie Mudge,"
-    - "move,:ask,Trudie Mudge,"
-- Dice Actions (Roll both, move the players in adjacent rooms)
-    - Dice 1
-        - "Buford Barnswallow"
-        - "Earl of Volesworthy"
-        - "Mildred Wellington"
-        - "Viola Chung"
-        - "Dr. Ashraf Najem"
-        - "?" (anyone you want)
-    - Dice 2
-        - "Nadia Bwalya"
-        - "Remy La Rocque"
-        - "Lily Nesbit"
-        - "Trudie Mudge"
-        - "Stefano Laconi"
-        - "?" (anyone you want)
-
-### 12/6
-- Deciding moving which player and where would be best
-    - Move players in decision tree
-        - Sum up who you can see vs who you can't see
-        - Choose whichever decision brings greater amount of players to cross out
-        - Check what you have originally picked, and pick decision that most reduces your guess domain
-            - Check the probability of 'yes' or 'no'
-            - For example, (2:3) vs (4:1) can be very subjective (is it worth to choose 4?)
-- Picking gems
-    - Have an idea of what other player gems are currently on
-        - Pick a gem color that does not reveal your identity
-        - Pick gem colors that other players are also on (this makes it hard for other agents to detect you)
-    - Take personal probability weighted score and ensure that yours' is better than other players
-        - I.E. (1/5)(7) where (1/5) is probability of guessing your identity and (7) is what the score is worth
-        - Ensure that your gain (say, three points for gem) is better than theoretical agent scores
-
-### 12/11
-- New code that checks entropy
-- Compare all color assignments for players
-    - Count the number of color occurences for each world state
-    - For a given player, the largest number for colors is what the agent should most likely consider
 
 ## References
 - Rules: http://www.boardgamecapital.com/game_rules/suspicion.pdf

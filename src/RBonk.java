@@ -557,19 +557,12 @@ public class RBonk extends Bot {
                 }
 
             } else if (cardAction.startsWith("ask")) {
+                // TODO ask the right person a questions
+                System.out.println(cardAction);
                 actions += ":" + cardAction + otherPlayerNames[r.nextInt(otherPlayerNames.length)];
             }
         }
         return actions;
-    }
-
-    private int countGems(String gem) {
-        if (gem.equals("red"))
-            return gemCounts[Suspicion.RED];
-        else if (gem.equals("green"))
-            return gemCounts[Suspicion.GREEN];
-        else
-            return gemCounts[Suspicion.YELLOW];
     }
 
     // @@@ This function returns a list of guests who are in a room that contains
@@ -698,6 +691,7 @@ public class RBonk extends Bot {
     private int calcGuestNameStats(int p, ArrayList<String> assignedIDs,
             HashMap<String, HashMap<String, Integer>> guestNameCounts) {
         int totalCount = 0;
+        // TODO
         // @@@ this is the base case for the recursion
         // @@@ if we hit this, we've got a full assignment, so we update the counts on
         // the assigned ids
