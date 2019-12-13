@@ -32,7 +32,12 @@ $-> java Suspicion -loadplayers dumbplayers.txt
 <br>
 
 ## Approach
-// TODO
+For this project, we had a few goals set for making our agent perform better within this environment. This is what we 
+have attempted to implement:
+
+- Pick best dice move
+- Pick best card action (move)
+- Pick best 
 
 ## Challenges
 // TODO
