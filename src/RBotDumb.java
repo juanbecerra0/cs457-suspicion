@@ -72,7 +72,7 @@ public class RBotDumb extends Bot
 
             int x=0, y=0;
             boolean red, green, yellow;
-            System.out.println(gemLocations);
+            //System.out.println(gemLocations);
             for(String gems:gemLocations.trim().split(":"))
             {
                 if(gems.contains("red")) red=true;

@@ -15,6 +15,7 @@ public class RBonk extends Bot {
     TextDisplay display;
 
     int[] gemCounts = new int[3];
+    int[][][] gemArray = new int[3][4][3];  // Red, Green, Yellow
 
     // @@@ Assumes all guest IDs in the player's possible list are equally probable
     private double calcInformationEntropySimple(Player player) {
@@ -275,8 +276,6 @@ public class RBonk extends Bot {
     }
 
     /**
-     * @author Juan Becerra
-     * 
      * Takes a piece object and string array of possible moves.
      * Returns the best possible move index (from string array).
      * Used in dice moves.
@@ -316,8 +315,6 @@ public class RBonk extends Bot {
     }
 
     /**
-     * @author Juan Becerra
-     * 
      * Takes a piece object.
      * Returns the best possible move coordinates as a integer array
      * where returnPair[0] is x and returnPair[1] is y.
@@ -359,10 +356,58 @@ public class RBonk extends Bot {
         return returnPair;
     }
 
+    /**
+     * Takes a string representation of board and gem locations.
+     * Returns color that we should pick.
+     */
+    private int[] getBestColor(String board) {
+        // Split the string by : seperated tokens
+        String[] tokens = board.split("[:]", -1);    // 12 tokens
+        int[] counts = new int[3];  // Red green yellow
+
+        // Create a 2D array of ints representing the occurences of tokens in the string
+        int[][] pieceCountBoard = new int[3][4];
+        int k = 0;
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 4; j++) {
+                String thisToken = tokens[k++];
+                if(thisToken.length() == 0) {
+                    pieceCountBoard[i][j] = 0;
+                } else if (!thisToken.contains(",")) {
+                    pieceCountBoard[i][j] = 1;
+                } else {
+                    pieceCountBoard[i][j] = thisToken.split("[,]").length;
+                }
+
+                // Count occurences
+                if(pieceCountBoard[i][j] > 0) {
+                    if(gemArray[i][j][0] == 1) {
+                        counts[0]++;
+                    }
+                    if(gemArray[i][j][1] == 1) {
+                        counts[1]++;
+                    }
+                    if(gemArray[i][j][2] == 1) {
+                        counts[2]++;
+                    }
+                }
+            }
+        }
+
+        return counts;
+    }
+
+    private boolean madeGemArray = false;
+
     public String getPlayerActions(String d1, String d2, String card1, String card2, String board)
             throws Suspicion.BadActionException {
         this.board = new Board(board, pieces, gemLocations);
         String actions = "";
+
+        if(!madeGemArray) {
+            initGemArray(this.board.gemLocations);
+            madeGemArray = true;
+        }
 
         // Random move for dice1
         if (d1.equals("?"))
@@ -425,6 +470,8 @@ public class RBonk extends Bot {
             } else if (cardAction.startsWith("get")) {
                 // @@@ You SHOULD replace this with code that optimizes this decision
                 if (cardAction.equals("get,")) {
+
+                    getBestColor(board);
 
                     actions += ":get," +
                     this.board.rooms[me.row][me.col].availableGems[r.nextInt(this.board.rooms[me.row][me.col].availableGems.length)];
@@ -682,6 +729,43 @@ public class RBonk extends Bot {
             rval += ":";
         }
         return rval.substring(0, rval.length() - 1);
+    }
+
+    private void initGemArray(String dumbGemString) {
+        // Split the string by : seperated tokens
+        String[] tokens = dumbGemString.split("[:]", -1);    // 12 tokens
+        
+        // Create a 2D array of ints representing the occurences of tokens in the string
+        int k = 0;
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 4; j++) {
+                String thisToken = tokens[k++];
+                gemArray[i][j][0] = 0;
+                gemArray[i][j][1] = 0;
+                gemArray[i][j][2] = 0;
+                if (!thisToken.contains(",")) {
+                    if(thisToken.trim().equals("red")) {
+                        gemArray[i][j][0] = 1;
+                    } else if(thisToken.trim().equals("green")) {
+                        gemArray[i][j][1] = 1;
+                    } else if(thisToken.trim().equals("yellow")) {
+                        gemArray[i][j][2] = 1;
+                    }
+                } else {
+                    String[] thisTokenTokenized = thisToken.split("[,]");
+                    for(String t : thisTokenTokenized) {
+                        if(t.trim().equals("red")) {
+                            gemArray[i][j][0] = 1;
+                        } else if(t.trim().equals("green")) {
+                            gemArray[i][j][1] = 1;
+                        } else if(t.trim().equals("yellow")) {
+                            gemArray[i][j][2] = 1;
+                        }
+                    }
+                }
+                //System.out.println("Gems at location (" + i + ", " + j + "): " + gemArray[i][j][0] + " " + gemArray[i][j][1] + " " + gemArray[i][j][2]);
+            }
+        }
     }
 
     public RBonk(String playerName, String guestName, int numStartingGems, String gemLocations,
