@@ -357,10 +357,13 @@ public class RBonk extends Bot {
     }
 
     /**
-     * Takes a string representation of board and gem locations.
-     * Returns color that we should pick.
+     * Takes a string representation of board.
+     * Returns an array of integers
+     * arr[0] - redCount
+     * arr[1] - greenCount
+     * arr[2] - yellowCount
      */
-    private int[] getBestColor(String board) {
+    private int[] getColorDistribution(String board) {
         // Split the string by : seperated tokens
         String[] tokens = board.split("[:]", -1);    // 12 tokens
         int[] counts = new int[3];  // Red green yellow
@@ -470,8 +473,6 @@ public class RBonk extends Bot {
             } else if (cardAction.startsWith("get")) {
                 // @@@ You SHOULD replace this with code that optimizes this decision
                 if (cardAction.equals("get,")) {
-
-                    getBestColor(board);
 
                     actions += ":get," +
                     this.board.rooms[me.row][me.col].availableGems[r.nextInt(this.board.rooms[me.row][me.col].availableGems.length)];
