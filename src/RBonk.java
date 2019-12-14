@@ -474,46 +474,71 @@ public class RBonk extends Bot {
         map.put(key, map.get(key) + 1);
     }
 
-    private String getBestPlayerToAsk(String canYouSee) {
-        Map<String, Integer> PlayerView = new HashMap(); // a map to store how many players can see each piece
+    /**
+     * Determines the most isolated piece and picks the 
+     * corresponding player that we most believe this piece 
+     * to belong to.
+     * 
+     */
+    private String getBestPlayerToAskSean(String board) {
 
-        for (String i : pieces.keySet()) { // for each player
-            Piece p1 = pieces.get(i);
-            for (String j : pieces.keySet()) { // can they see each other?
-                Piece p2 = pieces.get(j); // if they can
-                if (canSee(p1, p2)) {
-                    increment(PlayerView, p2.name); // increment the # of people who can see that piece
+        Piece mostIsolatedPiece = null;
+        int leastCanSeeCount = 10000;
+
+        // Find the most isolated piece
+        // Exclude pieces that are our own or aren't in any other player's domain
+        Iterator it = pieces.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            Piece thisPiece = (Piece) (pair.getValue());
+            int thisCanSeeCount = getVisiblePiecesCount(thisPiece.row, thisPiece.col, board);
+
+            // Don't include out own piece
+            if(thisCanSeeCount < leastCanSeeCount && !thisPiece.name.equals(me.name)) {
+                // Is this piece even in anyone's domain?
+                for(int i = 0; i < otherPlayerNames.length; i++) {
+                    Player thisPlayer = players.get(otherPlayerNames[i]);
+                    if(thisPlayer.possibleGuestNames.contains(thisPiece.name)) {
+                        mostIsolatedPiece = thisPiece;
+                        leastCanSeeCount = thisCanSeeCount;
+                    }
                 }
-                // System.out.println("\n\n\n "+ p1.name + " can see " + p2.name);
-            }
-        }
-        // System.out.println("\n\nPLAYER VIEW: " + PlayerView);
-        int min = Integer.MAX_VALUE;
-        String retval = "";
-        for (Map.Entry<String, Integer> entry : PlayerView.entrySet()) { // retrieve the piece the least players can see
-            if (entry.getValue() < min) {
-                min = entry.getValue();
-                retval = entry.getKey();
             }
         }
 
-        // uncomment next block if you want to ask for the piece that most players can
-        // see
-        /*
-         * int max = Integer.MIN_VALUE; String retval = ""; for(Map.Entry<String,
-         * Integer> entry : PlayerView.entrySet()) { if(entry.getValue() > max) { max =
-         * entry.getValue(); retval = entry.getKey(); } }
-         */
-        // System.out.println("THE MINIMUM IS :" + min + "\nKEY IS: " + retval)
-        return retval;
+        // Iterate through all of the players and find the player that is most
+        // likely to be this piece
+        ArrayList<Player> possiblePlayers = new ArrayList<Player>();
+        ArrayList<Double> playerStatsRating = new ArrayList<Double>();
+
+        for(int i = 0; i < otherPlayerNames.length; i++) {
+            Player thisPlayer = players.get(otherPlayerNames[i]);
+            if(thisPlayer.possibleGuestNames.contains(mostIsolatedPiece.name)) {
+                possiblePlayers.add(thisPlayer);
+                playerStatsRating.add((Double)(1 / Double.valueOf(thisPlayer.possibleGuestNames.size())));    // TODO change to entropy function?
+            }
+        }
+
+        // Get the index of the possible player with the most likely rating
+        double bestRating = -1.0;
+        int bestRatingIndex = -1;
+
+        for(int i = 0; i < possiblePlayers.size(); i++) {
+            if(playerStatsRating.get(i) > bestRating) {
+                bestRating = playerStatsRating.get(i);
+                bestRatingIndex = i;
+            }
+        }
+
+        // Finally, return the most likely player
+        return possiblePlayers.get(bestRatingIndex).playerName;
     }
 
     /**
-     * Dumb greedy algorithm that simply returns the player name with the greatest
-     * amount of ambiguity for identify (i.e., the largest sum of possible guest
-     * names)
+     * Returns the player name with the greatest amount of ambiguity 
+     * for identiyy (i.e., the largest sum of possible guestnames)
      */
-    private String getBestPlayerToAskDumb() {
+    private String getBestPlayerToAskJuan() {
         Player bestPlayer = null;
         int bestNameCount = -1;
 
@@ -613,9 +638,9 @@ public class RBonk extends Bot {
 
             } else if (cardAction.startsWith("ask")) {
                 // TODO ask the right person!
-                // actions += ":" + cardAction +
-                // otherPlayerNames[r.nextInt(otherPlayerNames.length)];
-                actions += ":" + cardAction + getBestPlayerToAskDumb();
+                //actions += ":" + cardAction + otherPlayerNames[r.nextInt(otherPlayerNames.length)];
+                //actions += ":" + cardAction + getBestPlayerToAskJuan();
+                actions += ":" + cardAction + getBestPlayerToAskSean(board);
             }
         }
         return actions;
