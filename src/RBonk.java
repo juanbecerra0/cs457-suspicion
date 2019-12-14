@@ -15,7 +15,7 @@ public class RBonk extends Bot {
     TextDisplay display;
 
     int[] gemCounts = new int[3];
-    int[][][] gemArray = new int[3][4][3];  // Red, Green, Yellow
+    int[][][] gemArray = new int[3][4][3]; // Red, Green, Yellow
 
     // @@@ Assumes all guest IDs in the player's possible list are equally probable
     private double calcInformationEntropySimple(Player player) {
@@ -224,21 +224,21 @@ public class RBonk extends Bot {
     /**
      * @author Juan Becerra
      * 
-     * Gets the number of pieces that a piece would be able to see from a 
-     * specified x and y coordinate, given a formatted board string.
-     * Used in getBestMoveAdjacent and Anywhere.
+     *         Gets the number of pieces that a piece would be able to see from a
+     *         specified x and y coordinate, given a formatted board string. Used in
+     *         getBestMoveAdjacent and Anywhere.
      */
     private int getVisiblePiecesCount(int x, int y, String board) {
         // Split the string by : seperated tokens
-        String[] tokens = board.split("[:]", -1);    // 12 tokens
-        
+        String[] tokens = board.split("[:]", -1); // 12 tokens
+
         // Create a 2D array of ints representing the occurences of tokens in the string
         int[][] pieceCountBoard = new int[3][4];
         int k = 0;
-        for(int i = 0; i < 3; i++) {
-            for(int j = 0; j < 4; j++) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
                 String thisToken = tokens[k++];
-                if(thisToken.length() == 0) {
+                if (thisToken.length() == 0) {
                     pieceCountBoard[i][j] = 0;
                 } else if (!thisToken.contains(",")) {
                     pieceCountBoard[i][j] = 1;
@@ -250,25 +250,25 @@ public class RBonk extends Bot {
 
         // Finally, count the pieces adjacent/at the piece at location x,y
         int count = 0;
-        count+= pieceCountBoard[x][y] - 1;  // Currently standing here
-        
+        count += pieceCountBoard[x][y] - 1; // Currently standing here
+
         int tempx = x;
         int tempy = y;
 
-        while(--tempx >= 0) {   // left
-            count+= pieceCountBoard[tempx][tempy];
+        while (--tempx >= 0) { // left
+            count += pieceCountBoard[tempx][tempy];
         }
         tempx = x;
-        while(++tempx <= 2) {   // right
-            count+= pieceCountBoard[tempx][tempy];
+        while (++tempx <= 2) { // right
+            count += pieceCountBoard[tempx][tempy];
         }
         tempx = x;
-        while(--tempy >= 0) {   // up
-            count+= pieceCountBoard[tempx][tempy];
+        while (--tempy >= 0) { // up
+            count += pieceCountBoard[tempx][tempy];
         }
         tempy = y;
-        while(++tempy <= 3) {   // down
-            count+= pieceCountBoard[tempx][tempy];
+        while (++tempy <= 3) { // down
+            count += pieceCountBoard[tempx][tempy];
         }
         tempy = y;
 
@@ -276,21 +276,21 @@ public class RBonk extends Bot {
     }
 
     /**
-     * Takes a piece object and string array of possible moves.
-     * Returns the best possible move index (from string array).
-     * Used in dice moves.
+     * Takes a piece object and string array of possible moves. Returns the best
+     * possible move index (from string array). Used in dice moves.
      */
     private int getBestMoveAdjacent(Piece piece, String board, String[] moves, boolean lookForLeast) {
         int returnIndex = -1;
 
-        if(lookForLeast) {
+        if (lookForLeast) {
             // Get the number of visible pieces from all adjacent positions
             int thisIndex = 0;
             int bestCount = 10000;
-            for(String coordString : moves) {
+            for (String coordString : moves) {
                 String[] coordSplit = coordString.split("[,]");
-                int thisCount = getVisiblePiecesCount(Integer.valueOf(coordSplit[0]), Integer.valueOf(coordSplit[1]), board);
-                if(thisCount < bestCount) {
+                int thisCount = getVisiblePiecesCount(Integer.valueOf(coordSplit[0]), Integer.valueOf(coordSplit[1]),
+                        board);
+                if (thisCount < bestCount) {
                     bestCount = thisCount;
                     returnIndex = thisIndex;
                 }
@@ -300,10 +300,11 @@ public class RBonk extends Bot {
             // Get the number of visible pieces from all adjacent positions
             int thisIndex = 0;
             int bestCount = -1;
-            for(String coordString : moves) {
+            for (String coordString : moves) {
                 String[] coordSplit = coordString.split("[,]");
-                int thisCount = getVisiblePiecesCount(Integer.valueOf(coordSplit[0]), Integer.valueOf(coordSplit[1]), board);
-                if(thisCount > bestCount) {
+                int thisCount = getVisiblePiecesCount(Integer.valueOf(coordSplit[0]), Integer.valueOf(coordSplit[1]),
+                        board);
+                if (thisCount > bestCount) {
                     bestCount = thisCount;
                     returnIndex = thisIndex;
                 }
@@ -315,23 +316,21 @@ public class RBonk extends Bot {
     }
 
     /**
-     * Takes a piece object.
-     * Returns the best possible move coordinates as a integer array
-     * where returnPair[0] is x and returnPair[1] is y.
-     * Used in "move," cards.
+     * Takes a piece object. Returns the best possible move coordinates as a integer
+     * array where returnPair[0] is x and returnPair[1] is y. Used in "move," cards.
      */
     private int[] getBestMoveAnywhere(Piece piece, String board, boolean lookForLeast) {
         int[] returnPair = new int[2];
         returnPair[0] = -1;
         returnPair[1] = -1;
 
-        if(lookForLeast) {
+        if (lookForLeast) {
             // Iterate through every possible index
             int bestCount = 10000;
-            for(int i = 0; i < 3; i++) {
-                for(int j = 0; j < 4; j++) {
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 4; j++) {
                     int thisCount = getVisiblePiecesCount(i, j, board);
-                    if(thisCount < bestCount) {
+                    if (thisCount < bestCount) {
                         bestCount = thisCount;
                         returnPair[0] = i;
                         returnPair[1] = j;
@@ -341,10 +340,10 @@ public class RBonk extends Bot {
         } else {
             // Iterate through every possible index
             int bestCount = -1;
-            for(int i = 0; i < 3; i++) {
-                for(int j = 0; j < 4; j++) {
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 4; j++) {
                     int thisCount = getVisiblePiecesCount(i, j, board);
-                    if(thisCount > bestCount) {
+                    if (thisCount > bestCount) {
                         bestCount = thisCount;
                         returnPair[0] = i;
                         returnPair[1] = j;
@@ -357,24 +356,21 @@ public class RBonk extends Bot {
     }
 
     /**
-     * Takes a string representation of board.
-     * Returns an array of integers
-     * arr[0] - redCount
-     * arr[1] - greenCount
-     * arr[2] - yellowCount
+     * Takes a string representation of board. Returns an array of integers arr[0] -
+     * redCount arr[1] - greenCount arr[2] - yellowCount
      */
     private int[] getColorDistribution(String board) {
         // Split the string by : seperated tokens
-        String[] tokens = board.split("[:]", -1);    // 12 tokens
-        int[] counts = new int[3];  // Red green yellow
+        String[] tokens = board.split("[:]", -1); // 12 tokens
+        int[] counts = new int[3]; // Red green yellow
 
         // Create a 2D array of ints representing the occurences of tokens in the string
         int[][] pieceCountBoard = new int[3][4];
         int k = 0;
-        for(int i = 0; i < 3; i++) {
-            for(int j = 0; j < 4; j++) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
                 String thisToken = tokens[k++];
-                if(thisToken.length() == 0) {
+                if (thisToken.length() == 0) {
                     pieceCountBoard[i][j] = 0;
                 } else if (!thisToken.contains(",")) {
                     pieceCountBoard[i][j] = 1;
@@ -383,14 +379,14 @@ public class RBonk extends Bot {
                 }
 
                 // Count occurences
-                if(pieceCountBoard[i][j] > 0) {
-                    if(gemArray[i][j][0] == 1) {
+                if (pieceCountBoard[i][j] > 0) {
+                    if (gemArray[i][j][0] == 1) {
                         counts[0]++;
                     }
-                    if(gemArray[i][j][1] == 1) {
+                    if (gemArray[i][j][1] == 1) {
                         counts[1]++;
                     }
-                    if(gemArray[i][j][2] == 1) {
+                    if (gemArray[i][j][2] == 1) {
                         counts[2]++;
                     }
                 }
@@ -402,37 +398,40 @@ public class RBonk extends Bot {
 
     private int redGems = 0;
     private int greenGems = 0;
-    private int yellowGems = 0; 
+    private int yellowGems = 0;
 
-    /** 
-     * When we need to pick a color, this returns a string of the 
-     * best color to pick.
+    /**
+     * When we need to pick a color, this returns a string of the best color to
+     * pick.
      * 
-    */
+     */
     private String getBestColor(String board) {
         int[] colors = getColorDistribution(board);
         int total = 0;
 
-        for(int i = 0; i < colors.length; i++) {
+        for (int i = 0; i < colors.length; i++) {
             total += colors[i];
         }
 
         int totalHeld = redGems + greenGems + yellowGems;
 
-        double redScore = (Double.valueOf(totalHeld) / Double.valueOf(redGems)) * (Double.valueOf(colors[0]) / Double.valueOf(total));
-        double greenScore = (Double.valueOf(totalHeld) / Double.valueOf(greenGems)) * (Double.valueOf(colors[1]) / Double.valueOf(total));
-        double yellowScore = (Double.valueOf(totalHeld) / Double.valueOf(yellowGems)) * (Double.valueOf(colors[2]) / Double.valueOf(total));
+        double redScore = (Double.valueOf(totalHeld) / Double.valueOf(redGems))
+                * (Double.valueOf(colors[0]) / Double.valueOf(total));
+        double greenScore = (Double.valueOf(totalHeld) / Double.valueOf(greenGems))
+                * (Double.valueOf(colors[1]) / Double.valueOf(total));
+        double yellowScore = (Double.valueOf(totalHeld) / Double.valueOf(yellowGems))
+                * (Double.valueOf(colors[2]) / Double.valueOf(total));
 
         boolean canPickRed = false;
         boolean canPickGreen = false;
         boolean canPickYellow = false;
-        if(gemArray[me.row][me.col][0] == 1) {
+        if (gemArray[me.row][me.col][0] == 1) {
             canPickRed = true;
         }
-        if(gemArray[me.row][me.col][1] == 1) {
+        if (gemArray[me.row][me.col][1] == 1) {
             canPickGreen = true;
         }
-        if(gemArray[me.row][me.col][2] == 1) {
+        if (gemArray[me.row][me.col][2] == 1) {
             canPickYellow = true;
         }
 
@@ -470,60 +469,57 @@ public class RBonk extends Bot {
         }
     }
 
-    private static void increment(Map<String, Integer> map, String key){ //hash map value incrementer
-	    map.putIfAbsent(key,0);
-	    map.put(key,map.get(key)+1);
+    private static void increment(Map<String, Integer> map, String key) { // hash map value incrementer
+        map.putIfAbsent(key, 0);
+        map.put(key, map.get(key) + 1);
     }
-  
-    private String getBestPlayerToAsk(String canYouSee) {
-      Map<String, Integer> PlayerView = new HashMap(); //a map to store how many players can see each piece 
-	
-	    for (String i : pieces.keySet()) {	//for each player
-        Piece p1 = pieces.get(i);
-	    	for (String j : pieces.keySet()) { //can they see each other?
-          Piece p2 = pieces.get(j); //if they can	
-          if (canSee(p1, p2)){
-				    increment(PlayerView,p2.name); //increment the # of people who can see that piece
-		      }
-  	      //System.out.println("\n\n\n "+ p1.name + " can see " + p2.name);
-        }
-      }
-	    //System.out.println("\n\nPLAYER VIEW: " + PlayerView);
-	    int min = Integer.MAX_VALUE;
-	    String retval = ""; 
-	    for(Map.Entry<String, Integer> entry : PlayerView.entrySet()) { //retrieve the piece the least players can see
-    	  if(entry.getValue() < min) {
-          min = entry.getValue();
-        	retval = entry.getKey();
-    		}
-      }
 
-	//uncomment next block if you want to ask for the piece that most players can see        
-  /*	
-	int max = Integer.MIN_VALUE;
-  String retval = "";
-  for(Map.Entry<String, Integer> entry : PlayerView.entrySet()) {
-    if(entry.getValue() > max) {
-      max = entry.getValue();
-      retval = entry.getKey();
+    private String getBestPlayerToAsk(String canYouSee) {
+        Map<String, Integer> PlayerView = new HashMap(); // a map to store how many players can see each piece
+
+        for (String i : pieces.keySet()) { // for each player
+            Piece p1 = pieces.get(i);
+            for (String j : pieces.keySet()) { // can they see each other?
+                Piece p2 = pieces.get(j); // if they can
+                if (canSee(p1, p2)) {
+                    increment(PlayerView, p2.name); // increment the # of people who can see that piece
+                }
+                // System.out.println("\n\n\n "+ p1.name + " can see " + p2.name);
+            }
+        }
+        // System.out.println("\n\nPLAYER VIEW: " + PlayerView);
+        int min = Integer.MAX_VALUE;
+        String retval = "";
+        for (Map.Entry<String, Integer> entry : PlayerView.entrySet()) { // retrieve the piece the least players can see
+            if (entry.getValue() < min) {
+                min = entry.getValue();
+                retval = entry.getKey();
+            }
+        }
+
+        // uncomment next block if you want to ask for the piece that most players can
+        // see
+        /*
+         * int max = Integer.MIN_VALUE; String retval = ""; for(Map.Entry<String,
+         * Integer> entry : PlayerView.entrySet()) { if(entry.getValue() > max) { max =
+         * entry.getValue(); retval = entry.getKey(); } }
+         */
+        // System.out.println("THE MINIMUM IS :" + min + "\nKEY IS: " + retval)
+        return retval;
     }
-  }                                                                                                  
-*/                                                                                                            
-	//  System.out.println("THE MINIMUM IS :" + min + "\nKEY IS: " + retval)     
-	return retval;
-}
+
     /**
-     * Dumb greedy algorithm that simply returns the player name 
-     * with the greatest amount of ambiguity for identify
-     * (i.e., the largest sum of possible guest names)
+     * Dumb greedy algorithm that simply returns the player name with the greatest
+     * amount of ambiguity for identify (i.e., the largest sum of possible guest
+     * names)
      */
     private String getBestPlayerToAskDumb() {
         Player bestPlayer = null;
         int bestNameCount = -1;
 
-        for(int i = 0; i < otherPlayerNames.length; i++) {
+        for (int i = 0; i < otherPlayerNames.length; i++) {
             Player thisPlayer = players.get(otherPlayerNames[i]);
-            if(thisPlayer.possibleGuestNames.size() > bestNameCount) {
+            if (thisPlayer.possibleGuestNames.size() > bestNameCount) {
                 bestPlayer = thisPlayer;
                 bestNameCount = thisPlayer.possibleGuestNames.size();
             }
@@ -539,7 +535,7 @@ public class RBonk extends Bot {
         this.board = new Board(board, pieces, gemLocations);
         String actions = "";
 
-        if(!madeGemArray) {
+        if (!madeGemArray) {
             initGemArray(this.board.gemLocations);
             madeGemArray = true;
         }
@@ -550,7 +546,7 @@ public class RBonk extends Bot {
         Piece piece = pieces.get(d1);
         String[] moves = getPossibleMoves(piece);
         int movei;
-        if(piece.name == me.name) {
+        if (piece.name == me.name) {
             movei = getBestMoveAdjacent(piece, board, moves, true);
         } else {
             movei = getBestMoveAdjacent(piece, board, moves, false); // Using new method
@@ -564,7 +560,7 @@ public class RBonk extends Bot {
             d2 = guestNames[r.nextInt(guestNames.length)];
         piece = pieces.get(d2);
         moves = getPossibleMoves(piece);
-        if(piece.name == me.name) {
+        if (piece.name == me.name) {
             movei = getBestMoveAdjacent(piece, board, moves, true);
         } else {
             movei = getBestMoveAdjacent(piece, board, moves, false); // Using new method
@@ -583,10 +579,10 @@ public class RBonk extends Bot {
         {
             if (cardAction.startsWith("move")) {
                 String guest;
-                guest = guestNames[r.nextInt(guestNames.length)];   // May change later
+                guest = guestNames[r.nextInt(guestNames.length)]; // May change later
                 piece = pieces.get(guest);
                 int[] bestMove;
-                if(piece.name == me.name) {
+                if (piece.name == me.name) {
                     bestMove = getBestMoveAnywhere(piece, board, true);
                 } else {
                     bestMove = getBestMoveAnywhere(piece, board, false);
@@ -598,7 +594,7 @@ public class RBonk extends Bot {
             } else if (cardAction.startsWith("get")) {
                 String color = "";
                 // @@@ You SHOULD replace this with code that optimizes this decision
-                if (cardAction.equals("get,")) {        
+                if (cardAction.equals("get,")) {
                     color = getBestColor(board);
                     actions += ":get," + color;
                 } else {
@@ -607,7 +603,7 @@ public class RBonk extends Bot {
                     actions += ":" + cardAction;
                 }
                 // Increment the correct color
-                if(color.equals("red")) {
+                if (color.equals("red")) {
                     redGems++;
                 } else if (color.equals("green")) {
                     greenGems++;
@@ -617,7 +613,8 @@ public class RBonk extends Bot {
 
             } else if (cardAction.startsWith("ask")) {
                 // TODO ask the right person!
-                //actions += ":" + cardAction + otherPlayerNames[r.nextInt(otherPlayerNames.length)];
+                // actions += ":" + cardAction +
+                // otherPlayerNames[r.nextInt(otherPlayerNames.length)];
                 actions += ":" + cardAction + getBestPlayerToAskDumb();
             }
         }
@@ -846,43 +843,44 @@ public class RBonk extends Bot {
 
     private void initGemArray(String dumbGemString) {
         // Split the string by : seperated tokens
-        String[] tokens = dumbGemString.split("[:]", -1);    // 12 tokens
-        
+        String[] tokens = dumbGemString.split("[:]", -1); // 12 tokens
+
         // Create a 2D array of ints representing the occurences of tokens in the string
         int k = 0;
-        for(int i = 0; i < 3; i++) {
-            for(int j = 0; j < 4; j++) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
                 String thisToken = tokens[k++];
                 gemArray[i][j][0] = 0;
                 gemArray[i][j][1] = 0;
                 gemArray[i][j][2] = 0;
                 if (!thisToken.contains(",")) {
-                    if(thisToken.trim().equals("red")) {
+                    if (thisToken.trim().equals("red")) {
                         gemArray[i][j][0] = 1;
-                    } else if(thisToken.trim().equals("green")) {
+                    } else if (thisToken.trim().equals("green")) {
                         gemArray[i][j][1] = 1;
-                    } else if(thisToken.trim().equals("yellow")) {
+                    } else if (thisToken.trim().equals("yellow")) {
                         gemArray[i][j][2] = 1;
                     }
                 } else {
                     String[] thisTokenTokenized = thisToken.split("[,]");
-                    for(String t : thisTokenTokenized) {
-                        if(t.trim().equals("red")) {
+                    for (String t : thisTokenTokenized) {
+                        if (t.trim().equals("red")) {
                             gemArray[i][j][0] = 1;
-                        } else if(t.trim().equals("green")) {
+                        } else if (t.trim().equals("green")) {
                             gemArray[i][j][1] = 1;
-                        } else if(t.trim().equals("yellow")) {
+                        } else if (t.trim().equals("yellow")) {
                             gemArray[i][j][2] = 1;
                         }
                     }
                 }
-                //System.out.println("Gems at location (" + i + ", " + j + "): " + gemArray[i][j][0] + " " + gemArray[i][j][1] + " " + gemArray[i][j][2]);
+                // System.out.println("Gems at location (" + i + ", " + j + "): " +
+                // gemArray[i][j][0] + " " + gemArray[i][j][1] + " " + gemArray[i][j][2]);
             }
         }
     }
 
-    public RBonk(String playerName, String guestName, int numStartingGems, String gemLocations,
-            String[] playerNames, String[] guestNames) {
+    public RBonk(String playerName, String guestName, int numStartingGems, String gemLocations, String[] playerNames,
+            String[] guestNames) {
         super(playerName, guestName, numStartingGems, gemLocations, playerNames, guestNames);
         display = new TextDisplay(gemLocations);
         pieces = new HashMap<String, Piece>();
