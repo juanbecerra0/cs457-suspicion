@@ -512,11 +512,11 @@ public class RBonk extends Bot {
                retval = entry.getKey();
 	    }
 	}                                                                                                  
-                                                                                                            
+*/                                                                                                            
 	//  System.out.println("THE MINIMUM IS :" + min + "\nKEY IS: " + retval)     
 	return retval;
     }
-*/
+
     private boolean madeGemArray = false;
 
     public String getPlayerActions(String d1, String d2, String card1, String card2, String board)
