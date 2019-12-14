@@ -68,8 +68,14 @@ Obviously, these two ideas don't always result in the same gem selection, so we 
 
 This combination approach resulted in significantly better results (around 10% - 15%).
 
-### Asking the best visible character
-// TODO
+### Asking the best player if they can see a piece
+Initially, for finding the best player to ask if they can see a piece, we used a simple approach of 
+selecting the player we know the least about. This meant iterating through the list of other players 
+and choosing the one with the highest possible guest name count. This certainly isn't the most optimal way to
+make this decision, but it doesn't hurt to ask questions about players we know little about. This indeed yields 
+better scores (about 3%-5%).
+
+// TODO comment on a better approach (Sean)
 
 ### Picking the correct agent identities
 // TODO
