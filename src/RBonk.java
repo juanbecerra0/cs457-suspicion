@@ -469,18 +469,12 @@ public class RBonk extends Bot {
         }
     }
 
-    private static void increment(Map<String, Integer> map, String key) { // hash map value incrementer
-        map.putIfAbsent(key, 0);
-        map.put(key, map.get(key) + 1);
-    }
-
     /**
-     * Determines the most isolated piece and picks the 
-     * corresponding player that we most believe this piece 
-     * to belong to.
-     * 
+     * Determines the most isolated piece and returns a set 
+     * of the likelihood that other players are this player.
      */
-    private String getBestPlayerToAskSean(String board) {
+    private double[] getBestPlayerToAskIsolation(String board) {
+        double[] retScores = new double[otherPlayerNames.length];
 
         Piece mostIsolatedPiece = null;
         int leastCanSeeCount = 10000;
@@ -506,51 +500,61 @@ public class RBonk extends Bot {
             }
         }
 
-        // Iterate through all of the players and find the player that is most
-        // likely to be this piece
-        ArrayList<Player> possiblePlayers = new ArrayList<Player>();
-        ArrayList<Double> playerStatsRating = new ArrayList<Double>();
-
+        // Iterate through all of the players and record likeliness scores
+        // for each piece
         for(int i = 0; i < otherPlayerNames.length; i++) {
             Player thisPlayer = players.get(otherPlayerNames[i]);
             if(thisPlayer.possibleGuestNames.contains(mostIsolatedPiece.name)) {
-                possiblePlayers.add(thisPlayer);
-                playerStatsRating.add((Double)(1 / Double.valueOf(thisPlayer.possibleGuestNames.size())));    // TODO change to entropy function?
+                retScores[i] = ((double)(1 / Double.valueOf(thisPlayer.possibleGuestNames.size())));    // TODO change to entropy function?
+            } else {
+                retScores[i] = ((double)(1 / Double.valueOf(otherPlayerNames.length)));
             }
         }
 
-        // Get the index of the possible player with the most likely rating
-        double bestRating = -1.0;
-        int bestRatingIndex = -1;
-
-        for(int i = 0; i < possiblePlayers.size(); i++) {
-            if(playerStatsRating.get(i) > bestRating) {
-                bestRating = playerStatsRating.get(i);
-                bestRatingIndex = i;
-            }
-        }
-
-        // Finally, return the most likely player
-        return possiblePlayers.get(bestRatingIndex).playerName;
+        // Finally, return the scores
+        return retScores;
     }
 
     /**
-     * Returns the player name with the greatest amount of ambiguity 
-     * for identiyy (i.e., the largest sum of possible guestnames)
+     * Returns a set of scores for all other players, which
+     * is how ambiguous a player is to us. (ie, how large their 
+     * possible guest names list is)
      */
-    private String getBestPlayerToAskJuan() {
-        Player bestPlayer = null;
-        int bestNameCount = -1;
+    private double[] getBestPlayerToAskAmbiguity() {
+        double[] retScores = new double[otherPlayerNames.length];
 
         for (int i = 0; i < otherPlayerNames.length; i++) {
             Player thisPlayer = players.get(otherPlayerNames[i]);
-            if (thisPlayer.possibleGuestNames.size() > bestNameCount) {
-                bestPlayer = thisPlayer;
-                bestNameCount = thisPlayer.possibleGuestNames.size();
-            }
+            retScores[i] = (double)(1 / thisPlayer.possibleGuestNames.size());
         }
 
-        return bestPlayer.playerName;
+        return retScores;
+    }
+
+    /** 
+     * Given a board string, returns the player that we should ask if they 
+     * can see a piece. Uses a combination of the ambiguity of a player and 
+     * the likelihood that a player is the most isolated piece on the board
+    */
+    private String getBestPlayerToAsk(String board) {
+        double[] isolationScores = getBestPlayerToAskIsolation(board);
+        double[] ambiguityScores = getBestPlayerToAskAmbiguity();
+
+        // Iterate through the score sets, identifying the index with the best
+        // weighted score
+        double bestScore = -1.0;
+        int bestScoreIndex = -1;
+
+        for(int i = 0; i < otherPlayerNames.length; i++) {
+            double thisScore = isolationScores[i] * ambiguityScores[i];
+            if(thisScore > bestScore) {
+                bestScore = thisScore;
+                bestScoreIndex = i;
+            }
+            System.out.println(otherPlayerNames[i] + ": " + thisScore);
+        }
+
+        return otherPlayerNames[bestScoreIndex];
     }
 
     private boolean madeGemArray = false;
@@ -640,7 +644,8 @@ public class RBonk extends Bot {
                 // TODO ask the right person!
                 //actions += ":" + cardAction + otherPlayerNames[r.nextInt(otherPlayerNames.length)];
                 //actions += ":" + cardAction + getBestPlayerToAskJuan();
-                actions += ":" + cardAction + getBestPlayerToAskSean(board);
+                //actions += ":" + cardAction + getBestPlayerToAskSean(board);
+                actions += ":" + cardAction + getBestPlayerToAsk(board);
             }
         }
         return actions;

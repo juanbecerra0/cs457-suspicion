@@ -73,9 +73,21 @@ Initially, for finding the best player to ask if they can see a piece, we used a
 selecting the player we know the least about. This meant iterating through the list of other players 
 and choosing the one with the highest possible guest name count. This certainly isn't the most optimal way to
 make this decision, but it doesn't hurt to ask questions about players we know little about. This indeed yields 
-better scores (about 3%-5%).
+better scores.
 
-// TODO comment on a better approach (Sean)
+Later, we decided to also determine where the most isolated piece was, and we guessed who this piece may be using this function:
+
+// TODO may change when we figure out entropy
+isolationScore = 1 / possibleGuestNamesSum
+
+Of course, this is only taken into consideration when the isolated piece is within the domain of possible guest names of a 
+player. Otherwise, the score is recorded as 1 / the length of the list of other players.
+
+With both methods returning a score, we rated each player based off of this function:
+
+chooseScore = isolationScore * ambiguityScore
+
+... and chose the player with the highest score.
 
 ### Picking the correct agent identities
 // TODO
