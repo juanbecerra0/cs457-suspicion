@@ -470,6 +470,48 @@ public class RBonk extends Bot {
         }
     }
 
+    private static void increment(Map<String, Integer> map, String key){ //hash map value incrementer
+	    map.putIfAbsent(key,0);
+	    map.put(key,map.get(key)+1);
+    }
+  
+    private String getBestPlayerToAsk(String canYouSee) {
+      Map<String, Integer> PlayerView = new HashMap(); //a map to store how many players can see each piece 
+	
+	    for (String i : pieces.keySet()) {	//for each player
+        Piece p1 = pieces.get(i);
+	    	for (String j : pieces.keySet()) { //can they see each other?
+          Piece p2 = pieces.get(j); //if they can	
+          if (canSee(p1, p2)){
+				    increment(PlayerView,p2.name); //increment the # of people who can see that piece
+		      }
+  	      //System.out.println("\n\n\n "+ p1.name + " can see " + p2.name);
+        }
+      }
+	    //System.out.println("\n\nPLAYER VIEW: " + PlayerView);
+	    int min = Integer.MAX_VALUE;
+	    String retval = ""; 
+	    for(Map.Entry<String, Integer> entry : PlayerView.entrySet()) { //retrieve the piece the least players can see
+    	  if(entry.getValue() < min) {
+          min = entry.getValue();
+        	retval = entry.getKey();
+    		}
+      }
+
+	//uncomment next block if you want to ask for the piece that most players can see        
+  /*	
+	int max = Integer.MIN_VALUE;
+  String retval = "";
+  for(Map.Entry<String, Integer> entry : PlayerView.entrySet()) {
+    if(entry.getValue() > max) {
+      max = entry.getValue();
+      retval = entry.getKey();
+    }
+  }                                                                                                  
+*/                                                                                                            
+	//  System.out.println("THE MINIMUM IS :" + min + "\nKEY IS: " + retval)     
+	return retval;
+}
     /**
      * Dumb greedy algorithm that simply returns the player name 
      * with the greatest amount of ambiguity for identify
