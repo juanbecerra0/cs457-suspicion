@@ -470,6 +470,33 @@ public class RBonk extends Bot {
         }
     }
 
+    /**
+     * Given the name of a piece, returns the name of a 
+     * player that we should ask "Can you see {argument}"
+     */
+    private String getBestPlayerToAsk(String canYouSee) {
+        // Develop a list of players that can see this player
+        ArrayList<String> visibleList = new ArrayList<String>();
+
+        Piece ourPiece = pieces.get(canYouSee);
+
+        Iterator it = pieces.entrySet().iterator();
+        while(it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            Piece thisPiece = ((Piece)pair.getValue());
+            if(canSee(ourPiece, thisPiece)) {
+                visibleList.add(thisPiece.name);
+            }
+        }
+
+        // Now that we have a list of piece names that can see 
+        // the target, determine the best one to ask.
+
+        // TODO how the fuck
+
+        return visibleList.get(0);  // TODO change later
+    }
+
     private boolean madeGemArray = false;
 
     public String getPlayerActions(String d1, String d2, String card1, String card2, String board)
@@ -536,11 +563,8 @@ public class RBonk extends Bot {
             } else if (cardAction.startsWith("get")) {
                 String color = "";
                 // @@@ You SHOULD replace this with code that optimizes this decision
-                if (cardAction.equals("get,")) {
-                    
+                if (cardAction.equals("get,")) {        
                     color = getBestColor(board);
-                    // this.board.rooms[me.row][me.col].availableGems[r.nextInt(this.board.rooms[me.row][me.col].availableGems.length)];
-
                     actions += ":get," + color;
                 } else {
                     String[] tokens = cardAction.split("[,]");
@@ -558,7 +582,7 @@ public class RBonk extends Bot {
 
             } else if (cardAction.startsWith("ask")) {
                 // TODO ask the right person a questions
-                System.out.println(cardAction);
+                String personToAsk = getBestPlayerToAsk(cardAction.split(",")[1]);
                 actions += ":" + cardAction + otherPlayerNames[r.nextInt(otherPlayerNames.length)];
             }
         }

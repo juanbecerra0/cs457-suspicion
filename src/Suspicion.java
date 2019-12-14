@@ -454,7 +454,7 @@ public class Suspicion
     private void loadPlayerFromFile(Vector<Bot> bots, String fname, String pname, String guestName) throws Exception
     {
 
-        System.out.println("Loading player " + fname);
+        //System.out.println("Loading player " + fname);
         if(!botConstructors.containsKey(fname))
         {
             Class cls = new MyClassLoader(fname).retClass();

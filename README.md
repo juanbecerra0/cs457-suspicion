@@ -68,10 +68,10 @@ Obviously, these two ideas don't always result in the same gem selection, so we 
 
 This combination approach resulted in significantly better results (around 10% - 15%).
 
-### Asking the Right Player
+### Asking the best visible character
 // TODO
 
-### Picking the Right Player/Agent Identities
+### Picking the correct agent identities
 // TODO
 
 ## Challenges
