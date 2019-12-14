@@ -471,30 +471,23 @@ public class RBonk extends Bot {
     }
 
     /**
-     * Given the name of a piece, returns the name of a 
-     * player that we should ask "Can you see {argument}"
+     * Dumb greedy algorithm that simply returns the player name 
+     * with the greatest amount of ambiguity for identify
+     * (i.e., the largest sum of possible guest names)
      */
-    private String getBestPlayerToAsk(String canYouSee) {
-        // Develop a list of players that can see this player
-        ArrayList<String> visibleList = new ArrayList<String>();
+    private String getBestPlayerToAskDumb() {
+        Player bestPlayer = null;
+        int bestNameCount = -1;
 
-        Piece ourPiece = pieces.get(canYouSee);
-
-        Iterator it = pieces.entrySet().iterator();
-        while(it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            Piece thisPiece = ((Piece)pair.getValue());
-            if(canSee(ourPiece, thisPiece)) {
-                visibleList.add(thisPiece.name);
+        for(int i = 0; i < otherPlayerNames.length; i++) {
+            Player thisPlayer = players.get(otherPlayerNames[i]);
+            if(thisPlayer.possibleGuestNames.size() > bestNameCount) {
+                bestPlayer = thisPlayer;
+                bestNameCount = thisPlayer.possibleGuestNames.size();
             }
         }
 
-        // Now that we have a list of piece names that can see 
-        // the target, determine the best one to ask.
-
-        // TODO how the fuck
-
-        return visibleList.get(0);  // TODO change later
+        return bestPlayer.playerName;
     }
 
     private boolean madeGemArray = false;
@@ -581,9 +574,9 @@ public class RBonk extends Bot {
                 }
 
             } else if (cardAction.startsWith("ask")) {
-                // TODO ask the right person a questions
-                String personToAsk = getBestPlayerToAsk(cardAction.split(",")[1]);
-                actions += ":" + cardAction + otherPlayerNames[r.nextInt(otherPlayerNames.length)];
+                // TODO ask the right person!
+                //actions += ":" + cardAction + otherPlayerNames[r.nextInt(otherPlayerNames.length)];
+                actions += ":" + cardAction + getBestPlayerToAskDumb();
             }
         }
         return actions;
@@ -646,25 +639,6 @@ public class RBonk extends Bot {
             {
                 ArrayList<String> possibleGuests = getGuestsInRoomWithGem(board[splitindex], gem);
                 players.get(player).adjustKnowledge(possibleGuests);
-
-                /*
-                 * System.out.println(
-                 * "***************************************************************");
-                 * System.out.println(
-                 * "***************************************************************");
-                 * System.out.println(
-                 * "***************************************************************");
-                 * System.out.println(player + " took a gem!");
-                 * System.out.println("People who could take this gem: " + possibleGuests);
-                 * System.out.println("Possible guests: " +
-                 * players.get(player).possibleGuestNames);
-                 * display.displayBoard(board[splitindex]); System.out.println(
-                 * "***************************************************************");
-                 * System.out.println(
-                 * "***************************************************************");
-                 * System.out.println(
-                 * "***************************************************************");
-                 */
             }
         }
     }
