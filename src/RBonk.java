@@ -525,7 +525,8 @@ public class RBonk extends Bot {
 
         for (int i = 0; i < otherPlayerNames.length; i++) {
             Player thisPlayer = players.get(otherPlayerNames[i]);
-            retScores[i] = (double)(1 / thisPlayer.possibleGuestNames.size());
+            double domainSize = Double.valueOf(thisPlayer.possibleGuestNames.size());
+            retScores[i] = 1.0 / domainSize;
         }
 
         return retScores;
@@ -551,7 +552,6 @@ public class RBonk extends Bot {
                 bestScore = thisScore;
                 bestScoreIndex = i;
             }
-            System.out.println(otherPlayerNames[i] + ": " + thisScore);
         }
 
         return otherPlayerNames[bestScoreIndex];
