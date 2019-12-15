@@ -1,0 +1,92 @@
+Each Tournament is out of 100 games
+
+
+Dumb players Tournament
+Current tournament results...
+PlayerName,GuessScore,GemScore,TotalScore,wins
+RBonk.class0,4900,6197,11097,91
+RBotDumb.class7,2982,5902,8884,3
+RBotDumb.class3,2954,5888,8842,2
+RBotDumb.class1,3024,5883,8907,1
+RBotDumb.class2,2961,5776,8737,1
+RBotDumb.class6,2905,5922,8827,1
+RBotDumb.class5,2912,5771,8683,1
+RBotDumb.class4,3031,5906,8937,0
+
+
+players S1 Tournament
+Current tournament results...
+PlayerName,GuessScore,GemScore,TotalScore,wins
+RBotS1.class7,4886,6042,10928,17
+RBotS1.class6,4886,6095,10981,16
+RBotS1.class5,4893,5975,10868,14
+RBotS1.class3,4886,6003,10889,12
+RBonk.class0,4893,5962,10855,12
+RBotS1.class4,4893,6057,10950,11
+RBotS1.class1,4886,5981,10867,9
+RBotS1.class2,4886,5964,10850,9
+
+
+players S4 Tournament
+Current tournament results...
+PlayerName,GuessScore,GemScore,TotalScore,wins
+RBonk.class0,4900,6217,11117,30
+RBotS4.class1,4669,5885,10554,13
+RBotS4.class2,4599,5873,10472,12
+RBotS4.class7,4627,5850,10477,12
+RBotS4.class6,4494,5955,10449,10
+RBotS4.class5,4578,5824,10402,9
+RBotS4.class4,4557,5812,10369,8
+RBotS4.class3,4466,5806,10272,6
+
+
+players S5 Tournament
+Current tournament results...
+PlayerName,GuessScore,GemScore,TotalScore,wins
+RBonk.class0,4900,6063,10963,37
+RBotS5.class1,4438,5842,10280,14
+RBotS5.class6,4270,5843,10113,12
+RBotS5.class3,4396,5778,10174,10
+RBotS5.class5,4410,5845,10255,8
+RBotS5.class7,4452,5807,10259,7
+RBotS5.class2,4382,5795,10177,7
+RBotS5.class4,4319,5877,10196,5
+
+
+players S7 Tournament
+Current tournament results...
+PlayerName,GuessScore,GemScore,TotalScore,wins
+RBonk.class0,4893,6554,11447,100
+RBotS7.class7,3780,3876,7656,0
+RBotS7.class3,3850,3800,7650,0
+RBotS7.class5,3976,3798,7774,0
+RBotS7.class4,3850,3840,7690,0
+RBotS7.class6,3843,3842,7685,0
+RBotS7.class2,3808,3824,7632,0
+RBotS7.class1,3780,3903,7683,0
+
+
+players V4 Tournament
+Current tournament results...
+PlayerName,GuessScore,GemScore,TotalScore,wins
+RBotV4.class2,4900,6692,11592,16
+RBotV4.class6,4900,6682,11582,15
+RBotV4.class1,4900,6586,11486,15
+RBonk.class0,4900,6470,11370,13
+RBotV4.class3,4900,6656,11556,11
+RBotV4.class4,4900,6646,11546,11
+RBotV4.class5,4900,6621,11521,10
+RBotV4.class7,4900,6558,11458,9
+
+
+players Tournament
+Current tournament results...
+PlayerName,GuessScore,GemScore,TotalScore,wins
+RBotV4.class7,4900,6280,11180,31
+RBotS1.class2,4774,6259,11033,24
+RBonk.class0,4900,6221,11121,22
+RBotS4.class3,4536,5907,10443,12
+RBotS5.class4,4487,5955,10442,8
+RBotS6.class5,4361,5713,10074,3
+RBotS7.class6,3640,3381,7021,0
+RBotDumb.class1,2779,5894,8673,0
