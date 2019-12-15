@@ -90,10 +90,37 @@ chooseScore = isolationScore * ambiguityScore
 ... and chose the player with the highest score.
 
 ### Picking the correct agent identities
-// TODO
+By this point, we came to a realization. Our bot was guessing the identities of dumb-bots nearly 100% of the time 
+without having to modify our final guess at all. Our current optimizations were already cutting down other player domains 
+to a single character by the end of games. In a test against 7 dumb bots and 1000 iterations, meaning...
+
+7 bots * 7 points per guess * 1000 tests = 49000 possible points
+
+... we almost always got a perfect score of 49000.
+
+// TODO should we bother changing shit?
 
 ## Challenges
-// TODO
+Initially, accessing our agent's percepts was one of the most challenging aspects of this assignment. We needed access 
+attributes like the current board state, our gem count, opponent info, and our knowledge base. We weren't sure if we were 
+running an older version of the class source code, but we ended up developing a lot of work-arounds and helper functions 
+for accessing these attributes. For example, to keep count of our current gems, the int[] gemCount attribute never seemed 
+to actually get updated, so we instead created integer variables to keep track of them, and we incremented the right ones 
+by parsing our getPlayerActions() output string before we returned. Other examples include parsing the input board string 
+from getPlayerActions() and iterating through key-value pairs of hashmaps, like the "pieces" and "players" attributes.
+
+As somewhat novice players to the Suspicion board game, a lot of the decisions our agent made were based off of what we 
+would do given our little experience. When playing the game for the first time in class, we often wanted to isolate other 
+pieces while keeping our own piece with several other agents in view. In addition, we were always trying to balance the gems 
+that we were collecting in order to cash in on the bonus points for sets of three gems, but we were also trying to not seem 
+suspicios to other players by selecting gem colors that few other players had. We're not sure of these are the most "optimal" 
+strategies, but over all, they seemed to help us win significantly more games than our initial random approach.
+
+We weren't able to fully implement some features relating to entropy as we could not get them fully working. That being 
+said, we're pretty proud of some of the probability and information theoretic-based approaches, namely our approach to picking 
+gems and picking the best people to ask. We beleive that, while we probably could have made better inferences, our system 
+of taking several "get-closer-to-winning" decisions and combining their probabilities into a final score really helped us 
+make some great decisions, especially in making inferences for other players' identities.
 
 ## Testing
 // TODO
